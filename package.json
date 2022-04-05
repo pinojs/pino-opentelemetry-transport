@@ -1,0 +1,31 @@
+{
+  "name": "pino-opentelemetry-transport",
+  "version": "0.1.0",
+  "description": "OpenTelemetry transport for Pino",
+  "main": "pino-opentelemetry-transport.js",
+  "scripts": {
+    "dev": "tap -w -R spec",
+    "prepare": "husky install",
+    "test": "standard | snazzy && tap",
+    "test-ci": "standard | snazzy && tap --coverage-report=lcovonly && tsd"
+  },
+  "author": "Vladimir Adamic <vladimir.adamic@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "sonic-boom": "^2.6.0"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.0",
+    "husky": "^7.0.0",
+    "pino": "^7.9.2",
+    "pino-pretty": "^7.6.0",
+    "standard": "^16.0.3",
+    "snazzy": "^9.0.0",
+    "tap": "^16.0.0"
+  },
+  "standard": {
+    "ignore": [
+      "node_modules/"
+    ]
+  }
+}
