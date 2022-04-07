@@ -7,21 +7,25 @@
     "dev": "tap -w -R spec",
     "prepare": "husky install",
     "test": "standard | snazzy && tap",
-    "test-ci": "standard | snazzy && tap --coverage-report=lcovonly && tsd"
+    "test-ci": "standard | snazzy && tap --coverage-report=lcovonly",
+    "generate-types": "tsc pino-opentelemetry-transport.js --declaration --allowJs --emitDeclarationOnly --esModuleInterop --outDir types"
   },
   "author": "Vladimir Adamic <vladimir.adamic@gmail.com>",
   "license": "MIT",
   "dependencies": {
+    "pino-abstract-transport": "github:Vunovati/pino-abstract-transport",
     "sonic-boom": "^2.6.0"
   },
+  "types": "./types/pino-opentelemetry-transport.d.ts",
   "devDependencies": {
     "@types/node": "^17.0.0",
     "husky": "^7.0.0",
     "pino": "^7.9.2",
     "pino-pretty": "^7.6.0",
-    "standard": "^16.0.3",
     "snazzy": "^9.0.0",
-    "tap": "^16.0.0"
+    "standard": "^16.0.3",
+    "tap": "^16.0.0",
+    "typescript": "4.6.3"
   },
   "standard": {
     "ignore": [

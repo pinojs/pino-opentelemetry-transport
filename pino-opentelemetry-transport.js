@@ -1,17 +1,44 @@
+// @ts-check
 'use strict'
 
 const build = require('pino-abstract-transport')
+const {SonicBoom} = require('sonic-boom')
+const {once} = require('events')
 
-const SonicBoom = require('sonic-boom')
-const { once } = require('events')
+const DEFAULT_MESSAGE_KEY = 'msg'
 
+/**
+ * @typedef {Object} CommonBindings
+ * @property {string=} msg
+ * @property {number=} level
+ * @property {number=} time
+ * @property {string=} hostname
+ * @property {number=} pid
+ *
+ * @typedef {Record<string, string | number | Object> & CommonBindings} Bindings
+ *
+ */
+
+/**
+ * Pino OpenTelemetry transport
+ *
+ * Maps Pino log entries to OpenTelemetry Data model
+ *
+ * @typedef {Object} Options
+ * @property {string | number} [destination=1]
+ * @property {string} [messageKey="msg"]
+ *
+ * @param {Options} opts
+ */
 module.exports = async function (opts) {
-  const destination = new SonicBoom({ dest: opts.destination || 1, sync: false })
+  const destination = new SonicBoom({dest: opts.destination || 1, sync: false})
+  const mapperOptions = {
+    messageKey: opts.messageKey || DEFAULT_MESSAGE_KEY,
+  }
 
-  // TODO: add correct type
-  return build(async function (source) {
+  return build(async function (/** @type { AsyncIterable<Bindings> } */ source) {
     for await (const obj of source) {
-      const updatedLine = JSON.stringify(toOpenTelemetry(obj)) + '\n'
+      const updatedLine = JSON.stringify(toOpenTelemetry(obj, mapperOptions)) + '\n'
       const writeResult = destination.write(updatedLine)
       const toDrain = !writeResult
       // This block will handle backpressure
@@ -20,7 +47,7 @@ module.exports = async function (opts) {
       }
     }
   }, {
-    async close () {
+    async close() {
       destination.end()
       await once(destination, 'close')
     }
@@ -71,36 +98,38 @@ const SEVERITY_NAME_MAP = {
 }
 
 /**
- * @typedef {Object} SourceObject
- * @property {string} msg
- * @property {number} level
- * @property {number} time
- * @property {string} hostname
- * @property {number} pid
- */
-
-/**
+ * Converts a pino log object to an OpenTelemetry log object.
+ *
  * @typedef {Object} OpenTelemetryLogData
  * @property {string=} SeverityText
  * @property {string=} SeverityNumber
- * @property {string} Timestamp
+ * @property {number} Timestamp
  * @property {string} Body
- */
-
-/**
- * Converts a pino log object to an OpenTelemetry log object.
+ * @property {{ 'host.hostname': string, 'process.pid': number }} Resource
+ * @property {Record<string, any>} Attributes
  *
- * @param {SourceObject} sourceObject
+ * @typedef {Object} MapperOptions
+ * @property {string} messageKey
+ *
+ * @param {Bindings} sourceObject
+ * @param {MapperOptions} mapperOptions
  * @returns {OpenTelemetryLogData}
  */
-function toOpenTelemetry (obj) {
-  const severityNumber = SEVERITY_NUMBER_MAP[obj.level] || FATAL_SEVERITY_NUMBER
+function toOpenTelemetry(sourceObject, { messageKey }) {
+  const {time, level, hostname, pid, [messageKey]: msg, ...attributes} = sourceObject
+
+  const severityNumber = SEVERITY_NUMBER_MAP[sourceObject.level] || FATAL_SEVERITY_NUMBER
   const severityText = SEVERITY_NAME_MAP[severityNumber]
 
   return {
-    Body: obj.msg,
-    Timestamp: obj.time,
+    Body: msg,
+    Timestamp: time,
     SeverityNumber: severityNumber,
-    SeverityText: severityText
+    SeverityText: severityText,
+    Resource: {
+      "host.hostname": hostname,
+      "process.pid": pid
+    },
+    Attributes: attributes
   }
 }
