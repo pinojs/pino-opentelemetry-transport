@@ -57,7 +57,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
   await sleep(1000)
   const content = await readFile(logFile, 'utf8')
 
-  const Timestamp = ms
+  const Timestamp = ms + '0'.repeat(6)
 
   const Resource = {
     'host.hostname': MOCK_HOSTNAME,
@@ -118,7 +118,7 @@ test('translate Pino log format to Open Telemetry data and store all extra bindi
   await sleep(1000)
   const content = await readFile(logFile, 'utf8')
 
-  const Timestamp = ms
+  const Timestamp = ms + '0'.repeat(6)
 
   const Resource = {
     'host.hostname': MOCK_HOSTNAME,
@@ -174,7 +174,7 @@ test('translate Pino log format to Open Telemetry data with custom messageKey', 
   await sleep(1000)
   const content = await readFile(logFile, 'utf8')
 
-  const Timestamp = ms
+  const Timestamp = ms + '0'.repeat(6)
 
   const Resource = {
     'host.hostname': MOCK_HOSTNAME,

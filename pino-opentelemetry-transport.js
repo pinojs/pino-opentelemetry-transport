@@ -7,6 +7,8 @@ const { once } = require('events')
 
 const DEFAULT_MESSAGE_KEY = 'msg'
 
+const ZEROS_FROM_MILLI_TO_NANO = '0'.repeat(6)
+
 /**
  * @typedef {Object} CommonBindings
  * @property {string=} msg
@@ -103,7 +105,7 @@ const SEVERITY_NAME_MAP = {
  * @typedef {Object} OpenTelemetryLogData
  * @property {string=} SeverityText
  * @property {string=} SeverityNumber
- * @property {number} Timestamp
+ * @property {string} Timestamp
  * @property {string} Body
  * @property {{ 'host.hostname': string, 'process.pid': number }} Resource
  * @property {Record<string, any>} Attributes
@@ -123,7 +125,7 @@ function toOpenTelemetry (sourceObject, { messageKey }) {
 
   return {
     Body: msg,
-    Timestamp: time,
+    Timestamp: time + ZEROS_FROM_MILLI_TO_NANO,
     SeverityNumber: severityNumber,
     SeverityText: severityText,
     Resource: {
