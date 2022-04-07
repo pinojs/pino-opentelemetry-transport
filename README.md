@@ -5,17 +5,17 @@
 <!-- [![Coverage Status](https://coveralls.io/repos/github/Vunovati/pino-opentelemetry-transport/badge.svg?branch=main)](https://coveralls.io/github/Vunovati/pino-opentelemetry-transport?branch=main) -->
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
- Pino transport for OpenTelemetry
+Pino transport for OpenTelemetry. Outputs logs in the [OpenTelemetry Log Data Model](https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md).
 
- ## Install
+## Install
 
- ```
+```
 npm i pino-opentelemetry-transport
 ```
 
  ## Usage
 
- ```js
+```js
 import { join } from 'path'
 import pino from 'pino'
 
@@ -29,6 +29,12 @@ const logger = pino(transport)
 
 (Also works in CommonJS)
 
+## Options
+
+When using the transport the followng opetions can be used
+
+* `destination`: The destination of the log.
+* `messageKey`: The key of the log message to be used as the OpenTelemetry log entry Body. Optional, value `msg` used by default (like in Pino itself).
 ## License
 
 MIT
