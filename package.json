@@ -22,6 +22,7 @@
     "husky": "^7.0.0",
     "pino": "^7.9.2",
     "pino-pretty": "^7.6.0",
+    "require-inject": "^1.4.4",
     "snazzy": "^9.0.0",
     "standard": "^16.0.3",
     "tap": "^16.0.0",
