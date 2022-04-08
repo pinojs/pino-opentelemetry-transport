@@ -13,7 +13,7 @@ Pino transport for OpenTelemetry. Outputs logs in the [OpenTelemetry Log Data Mo
 npm i pino-opentelemetry-transport
 ```
 
- ## Usage
+## Usage
 
 ```js
 import { join } from 'path'
