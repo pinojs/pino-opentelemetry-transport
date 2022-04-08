@@ -1,4 +1,3 @@
-// @ts-check
 'use strict'
 
 const build = require('pino-abstract-transport')
