@@ -31,7 +31,7 @@ const logger = pino(transport)
 
 ## Options
 
-When using the transport the followng opetions can be used
+When using the transport the following options can be used:
 
 * `destination`: The destination of the log.
 * `messageKey`: The key of the log message to be used as the OpenTelemetry log entry Body. Optional, value `msg` used by default (like in Pino itself).
