@@ -54,7 +54,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
   logger.error('test error')
   logger.fatal('test fatal')
 
-  await sleep(1000)
+  await sleep(100)
   const content = await readFile(logFile, 'utf8')
 
   const Timestamp = ms + '0'.repeat(6)
@@ -115,7 +115,7 @@ test('translate Pino log format to Open Telemetry data and store all extra bindi
 
   logger.trace(extra, 'test trace')
 
-  await sleep(1000)
+  await sleep(100)
   const content = await readFile(logFile, 'utf8')
 
   const Timestamp = ms + '0'.repeat(6)
@@ -171,7 +171,7 @@ test('translate Pino log format to Open Telemetry data with custom messageKey', 
 
   logger.trace(extra, 'test trace')
 
-  await sleep(1000)
+  await sleep(100)
   const content = await readFile(logFile, 'utf8')
 
   const Timestamp = ms + '0'.repeat(6)
