@@ -10,7 +10,7 @@
     "test-ci": "standard | snazzy && tap --coverage-report=lcovonly",
     "generate-types": "tsc pino-opentelemetry-transport.js --declaration --allowJs --emitDeclarationOnly --esModuleInterop --outDir types"
   },
-  "author": "Vladimir Adamic <vladimir.adamic@gmail.com>",
+  "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
   "license": "MIT",
   "dependencies": {
     "pino-abstract-transport": "github:Vunovati/pino-abstract-transport",
