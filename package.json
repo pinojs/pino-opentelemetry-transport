@@ -6,14 +6,16 @@
   "scripts": {
     "dev": "tap -w -R spec",
     "prepare": "husky install",
-    "test": "standard | snazzy && tap test/*.test.js && tsd",
-    "test-ci": "standard | snazzy && tap test/*.test.js --coverage-report=lcovonly && tsd"
+    "test": "standard | snazzy && tap --only test/*.test.js && tsd",
+    "test-ci": "standard | snazzy && tap --only test/*.test.js --coverage-report=lcovonly && tsd"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
   "license": "MIT",
   "dependencies": {
-    "pino-abstract-transport": "^0.5.0",
-    "sonic-boom": "^2.6.0"
+    "@opentelemetry/api-logs": "^0.39.1",
+    "@opentelemetry/exporter-logs-otlp-grpc": "^0.39.1",
+    "@opentelemetry/sdk-logs": "^0.39.1",
+    "pino-abstract-transport": "^1.0.0"
   },
   "types": "./pino-opentelemetry-transport.d.ts",
   "devDependencies": {

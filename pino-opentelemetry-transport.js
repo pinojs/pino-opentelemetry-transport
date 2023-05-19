@@ -1,12 +1,16 @@
 'use strict'
 
+const { SeverityNumber } = require('@opentelemetry/api-logs')
 const build = require('pino-abstract-transport')
-const { SonicBoom } = require('sonic-boom')
-const { once } = require('events')
+const { logs } = require('@opentelemetry/api-logs')
+const {
+  LoggerProvider,
+  SimpleLogRecordProcessor,
+  InMemoryLogRecordExporter
+} = require('@opentelemetry/sdk-logs')
+const { OTLPLogsExporter } = require('@opentelemetry/exporter-logs-otlp-grpc')
 
 const DEFAULT_MESSAGE_KEY = 'msg'
-
-const ZEROS_FROM_MILLI_TO_NANO = '0'.repeat(6)
 
 /**
  * @typedef {Object} CommonBindings
@@ -26,48 +30,64 @@ const ZEROS_FROM_MILLI_TO_NANO = '0'.repeat(6)
  * Maps Pino log entries to OpenTelemetry Data model
  *
  * @typedef {Object} Options
- * @property {string | number} destination
+ * @property {string} loggerName
+ * @property {string} serviceVersion
+ * @property {boolean} includeTraceContext
  * @property {string} [messageKey="msg"]
  *
  * @param {Options} opts
  */
 module.exports = async function (opts) {
-  const destination = new SonicBoom({ dest: opts.destination, sync: false })
   const mapperOptions = {
     messageKey: opts.messageKey || DEFAULT_MESSAGE_KEY
   }
+  const loggerProvider = new LoggerProvider({
+    forceFlushTimeoutMillis: 1000
+  })
+  loggerProvider.addLogRecordProcessor(
+    new SimpleLogRecordProcessor(
+      new OTLPLogsExporter()
+    )
+  )
 
-  return build(async function (/** @type { AsyncIterable<Bindings> } */ source) {
-    for await (const obj of source) {
-      const updatedLine = JSON.stringify(toOpenTelemetry(obj, mapperOptions)) + '\n'
-      const writeResult = destination.write(updatedLine)
-      const toDrain = !writeResult
-      // This block will handle backpressure
-      if (toDrain) {
-        await once(destination, 'drain')
+  const inMemoryLogRecordExporter = new InMemoryLogRecordExporter()
+
+  loggerProvider.addLogRecordProcessor(
+    new SimpleLogRecordProcessor(inMemoryLogRecordExporter)
+  )
+
+  logs.setGlobalLoggerProvider(loggerProvider)
+
+  const logger = logs.getLogger(opts.loggerName, opts.serviceVersion, {
+    includeTraceContext: opts.includeTraceContext ?? true
+  })
+
+  return build(
+    async function (/** @type { AsyncIterable<Bindings> } */ source) {
+      for await (const obj of source) {
+        logger.emit(toOpenTelemetry(obj, mapperOptions))
+      }
+    },
+    {
+      async close () {
+        return loggerProvider.shutdown()
       }
     }
-  }, {
-    async close () {
-      destination.end()
-      await once(destination, 'close')
-    }
-  })
+  )
 }
 
-const FATAL_SEVERITY_NUMBER = 21
 /**
  * If the source format has only a single severity that matches the meaning of the range
  * then it is recommended to assign that severity the smallest value of the range.
  * https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#mapping-of-severitynumber
  */
 const SEVERITY_NUMBER_MAP = {
-  10: 1,
-  20: 5,
-  30: 9,
-  40: 13,
-  50: 17,
-  60: FATAL_SEVERITY_NUMBER
+  10: SeverityNumber.TRACE,
+  20: SeverityNumber.DEBUG,
+  30: SeverityNumber.INFO,
+  40: SeverityNumber.WARN,
+  50: SeverityNumber.ERROR,
+  60: SeverityNumber.FATAL
 }
 
 // https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#displaying-severity
@@ -101,36 +121,31 @@ const SEVERITY_NAME_MAP = {
 /**
  * Converts a pino log object to an OpenTelemetry log object.
  *
- * @typedef {Object} OpenTelemetryLogData
- * @property {string=} SeverityText
- * @property {string=} SeverityNumber
- * @property {string} Timestamp
- * @property {string} Body
- * @property {{ 'host.hostname': string, 'process.pid': number }} Resource
- * @property {Record<string, any>} Attributes
- *
  * @typedef {Object} MapperOptions
  * @property {string} messageKey
  *
  * @param {Bindings} sourceObject
  * @param {MapperOptions} mapperOptions
- * @returns {OpenTelemetryLogData}
+ * @returns {import('@opentelemetry/api-logs').LogRecord}
  */
 function toOpenTelemetry (sourceObject, { messageKey }) {
-  const { time, level, hostname, pid, [messageKey]: msg, ...attributes } = sourceObject
+  const {
+    time,
+    level,
+    hostname,
+    pid,
+    [messageKey]: msg,
+    ...attributes
+  } = sourceObject
 
   const severityNumber = SEVERITY_NUMBER_MAP[sourceObject.level]
   const severityText = SEVERITY_NAME_MAP[severityNumber]
 
   return {
-    Body: msg,
-    Timestamp: time + ZEROS_FROM_MILLI_TO_NANO,
-    SeverityNumber: severityNumber,
-    SeverityText: severityText,
-    Resource: {
-      'host.hostname': hostname,
-      'process.pid': pid
-    },
-    Attributes: attributes
+    timestamp: time,
+    body: msg,
+    severityNumber,
+    attributes,
+    severityText
   }
 }

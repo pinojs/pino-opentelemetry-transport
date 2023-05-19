@@ -3,7 +3,6 @@ declare function _exports(opts: Options): Promise<import("stream").Transform & b
 export = _exports;
 
 type Options = {
-    destination: string | number;
     messageKey?: string;
 };
 
