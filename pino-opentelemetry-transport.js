@@ -6,6 +6,7 @@ const { logs } = require('@opentelemetry/api-logs')
 const {
   LoggerProvider,
   SimpleLogRecordProcessor,
+  // BatchLogRecordProcessor, // TODO: have option to use batch processor as well
   InMemoryLogRecordExporter
 } = require('@opentelemetry/sdk-logs')
 const { OTLPLogsExporter } = require('@opentelemetry/exporter-logs-otlp-grpc')
@@ -42,12 +43,10 @@ module.exports = async function (opts) {
     messageKey: opts.messageKey || DEFAULT_MESSAGE_KEY
   }
   const loggerProvider = new LoggerProvider({
-    forceFlushTimeoutMillis: 1000
+    resource: {} // TODO: pass in resource through opts
   })
   loggerProvider.addLogRecordProcessor(
-    new SimpleLogRecordProcessor(
-      new OTLPLogsExporter()
-    )
+    new SimpleLogRecordProcessor(new OTLPLogsExporter())
   )
 
   const inMemoryLogRecordExporter = new InMemoryLogRecordExporter()
