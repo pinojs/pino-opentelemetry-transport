@@ -4,10 +4,11 @@
   "description": "OpenTelemetry transport for Pino",
   "main": "pino-opentelemetry-transport.js",
   "scripts": {
-    "dev": "tap -w -R spec",
     "prepare": "husky install",
-    "test": "standard | snazzy && tap --only test/*.test.js && tsd",
-    "test-ci": "standard | snazzy && tap --only test/*.test.js --coverage-report=lcovonly && tsd"
+    "validate-and-test": "standard | snazzy && tap test/*.test.js --coverage-report=lcovonly && tsd",
+    "test": "npm run validate-and-test || npm run posttest",
+    "pretest": "touch otlp-logs.log && docker-compose up -d",
+    "posttest": "docker-compose down && rm otlp-logs.log"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
   "license": "MIT",

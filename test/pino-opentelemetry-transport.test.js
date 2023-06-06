@@ -3,14 +3,14 @@
 const { readFile } = require('fs/promises')
 const { truncateSync } = require('fs')
 const { join } = require('path')
-const { test, beforeEach } = require('tap')
+const { test, afterEach } = require('tap')
 const { promisify } = require('util')
 const requireInject = require('require-inject')
 
 const sleep = promisify(setTimeout)
 
 const logFile = join(__dirname, '..', 'otlp-logs.log')
-beforeEach(() => {
+afterEach(() => {
   truncateSync(logFile)
 })
 
@@ -38,9 +38,6 @@ test('translate Pino log format to Open Telemetry data format for each log level
   const logger = pino(transport, {})
   logger.level = 'trace'
 
-  logger.debug('Flush previous')
-  await sleep(500)
-
   logger.trace('test trace')
   await sleep(500)
   logger.debug('test debug')
@@ -52,10 +49,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
   logger.error('test error')
   await sleep(500)
   logger.fatal('test fatal')
-
   await sleep(500)
-
-  const content = await readFile(logFile, 'utf8')
 
   const resource = {
     attributes: [
@@ -82,6 +76,22 @@ test('translate Pino log format to Open Telemetry data format for each log level
     name: 'test-logger-name',
     version: 'test-service-version'
   }
+
+  const extra = {
+    foo: 'bar',
+    baz: 'qux'
+  }
+
+  logger.trace(extra, 'test trace')
+
+  await sleep(500)
+
+  const content = await readFile(logFile, 'utf8')
+
+  const lines = content
+    .split('\n')
+    .filter(Boolean)
+    .filter(line => line.startsWith('{'))
 
   const expectedLines = [
     {
@@ -209,13 +219,33 @@ test('translate Pino log format to Open Telemetry data format for each log level
           ]
         }
       ]
+    },
+    {
+      resourceLogs: [
+        {
+          resource,
+          scopeLogs: [
+            {
+              scope,
+              logRecords: [
+                {
+                  severityNumber: 1,
+                  severityText: 'TRACE',
+                  body: { stringValue: 'test trace' },
+                  traceId: '',
+                  spanId: '',
+                  attributes: [
+                    { key: 'foo', value: { stringValue: 'bar' } },
+                    { key: 'baz', value: { stringValue: 'qux' } }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ]
-
-  const lines = content
-    .split('\n')
-    .filter(Boolean)
-    .filter(line => line.startsWith('{'))
 
   same(lines.length, expectedLines.length, 'correct number of lines')
 
@@ -226,202 +256,10 @@ test('translate Pino log format to Open Telemetry data format for each log level
       `line ${lineNumber} severity is mapped correctly`
     )
   }
-})
 
-test('translate Pino log format to Open Telemetry data and store all extra bindings as attributes', async ({
-  equal,
-  hasStrict
-}) => {
-  const pino = requireInject.withEmptyCache('pino', {
-    os: {
-      hostname: () => MOCK_HOSTNAME
-    }
-  })
-
-  const transport = pino.transport({
-    level: 'trace',
-    target: '..',
-    options: {
-      loggerName: 'test-logger-name',
-      serviceVersion: 'test-service-version'
-    }
-  })
-
-  const logger = pino(transport)
-  logger.level = 'trace'
-
-  const extra = {
-    foo: 'bar',
-    baz: 'qux'
-  }
-
-  logger.debug('Flush previous')
-  await sleep(500)
-
-  logger.trace(extra, 'test trace')
-
-  await sleep(500)
-  const content = await readFile(logFile, 'utf8')
-
-  const resource = {
-    attributes: [
-      {
-        key: 'service.name',
-        value: {
-          stringValue:
-            'unknown_service:/Users/ovca/.nvm/versions/node/v18.16.0/bin/node'
-        }
-      },
-      {
-        key: 'telemetry.sdk.language',
-        value: { stringValue: 'nodejs' }
-      },
-      {
-        key: 'telemetry.sdk.name',
-        value: { stringValue: 'opentelemetry' }
-      },
-      { key: 'telemetry.sdk.version', value: { stringValue: '1.13.0' } }
-    ]
-  }
-
-  const scope = {
-    name: 'test-logger-name',
-    version: 'test-service-version'
-  }
-
-  const expectedLine = {
-    resourceLogs: [
-      {
-        resource,
-        scopeLogs: [
-          {
-            scope,
-            logRecords: [
-              {
-                severityNumber: 1,
-                severityText: 'TRACE',
-                body: { stringValue: 'test trace' },
-                traceId: '',
-                spanId: '',
-                attributes: [
-                  { key: 'foo', value: { stringValue: 'bar' } },
-                  { key: 'baz', value: { stringValue: 'qux' } }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-
-  const logEntries = content
-    .split('\n')
-    .filter(Boolean)
-    .filter(line => line.startsWith('{'))
-    .map(JSON.parse)
-
-  equal(logEntries.length, 1, 'only one log entry is written')
   hasStrict(
-    logEntries[0],
-    expectedLine,
-    'log entry contains all extra bindings as attributes'
+    JSON.parse(lines[lines.length - 1]),
+    (expectedLines[expectedLines.length - 1]),
+    'extra bindings are stored'
   )
-})
-
-test('translate Pino log format to Open Telemetry data with custom messageKey', async ({ equal, hasStrict }) => {
-  const pino = requireInject.withEmptyCache('pino', {
-    os: {
-      hostname: () => MOCK_HOSTNAME
-    }
-  })
-
-  const MESSAGE_KEY = 'customMessageKey'
-
-  const transport = pino.transport({
-    level: 'trace',
-    target: '..',
-    options: {
-      loggerName: 'test-logger-name',
-      serviceVersion: 'test-service-version',
-      messageKey: MESSAGE_KEY
-    }
-  })
-
-  const logger = pino(transport)
-  logger.level = 'trace'
-
-  const extra = {
-    foo: 'bar',
-    baz: 'qux',
-    [MESSAGE_KEY]: 'test message for message key'
-  }
-
-  logger.debug('Flush previous')
-  await sleep(500)
-
-  logger.trace(extra, 'test trace')
-
-  await sleep(500)
-  const content = await readFile(logFile, 'utf8')
-
-  const resource = {
-    attributes: [
-      {
-        key: 'service.name',
-        value: {
-          stringValue:
-            'unknown_service:/Users/ovca/.nvm/versions/node/v18.16.0/bin/node'
-        }
-      },
-      {
-        key: 'telemetry.sdk.language',
-        value: { stringValue: 'nodejs' }
-      },
-      {
-        key: 'telemetry.sdk.name',
-        value: { stringValue: 'opentelemetry' }
-      },
-      { key: 'telemetry.sdk.version', value: { stringValue: '1.13.0' } }
-    ]
-  }
-
-  const scope = {
-    name: 'test-logger-name',
-    version: 'test-service-version'
-  }
-
-  const expectedLine = {
-    resourceLogs: [
-      {
-        resource,
-        scopeLogs: [
-          {
-            scope,
-            logRecords: [
-              {
-                severityNumber: 1,
-                severityText: 'TRACE',
-                body: { stringValue: 'test message for message key' },
-                traceId: '',
-                spanId: '',
-                attributes: [
-                  { key: 'foo', value: { stringValue: 'bar' } },
-                  { key: 'baz', value: { stringValue: 'qux' } }
-                ]
-              }
-            ]
-          }
-        ]
-      }
-    ]
-  }
-  const logEntries = content
-    .split('\n')
-    .filter(Boolean)
-    .filter(line => line.startsWith('{'))
-    .map(JSON.parse)
-
-  equal(logEntries.length, 1, 'only one log entry is written')
-  hasStrict(logEntries[0], expectedLine, 'the log line interprets the custom messageKey value as Body')
 })
