@@ -9,7 +9,7 @@ const requireInject = require('require-inject')
 
 const sleep = promisify(setTimeout)
 
-const logFile = join(__dirname, '..', 'otlp-logs.log')
+const logFile = join('/', 'tmp', 'test-logs', 'otlp-logs.log')
 afterEach(() => {
   truncateSync(logFile)
 })

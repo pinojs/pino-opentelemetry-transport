@@ -5,7 +5,7 @@ receivers:
 
 exporters:
   file:
-    path: ./otlp-logs.log
+    path: ./etc/test-logs/otlp-logs.log
     flush_interval: 1
 
   logging:

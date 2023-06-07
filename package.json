@@ -7,8 +7,10 @@
     "prepare": "husky install",
     "validate-and-test": "standard | snazzy && tap test/*.test.js --coverage-report=lcovonly && tsd",
     "test": "npm run validate-and-test || npm run posttest",
-    "pretest": "touch otlp-logs.log && docker-compose up -d",
-    "posttest": "docker-compose down && rm otlp-logs.log"
+    "pretest": "npm run docker-run",
+    "posttest": "npm run docker-kill",
+    "docker-run": "docker run --volume=$(pwd)/otel-collector-config.yaml:/etc/otel-collector-config.yaml:rw --volume=/tmp/test-logs:/etc/test-logs:rw -p 4317:4317 -d otel/opentelemetry-collector-contrib:latest --config=/etc/otel-collector-config.yaml",
+    "docker-kill": "docker kill $(docker ps -qf expose=4317)"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
   "license": "MIT",
