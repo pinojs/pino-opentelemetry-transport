@@ -31,7 +31,8 @@ test('translate Pino log format to Open Telemetry data format for each log level
     target: '..',
     options: {
       loggerName: 'test-logger-name',
-      serviceVersion: 'test-service-version'
+      serviceVersion: 'test-service-version',
+      serviceName: 'test-service'
     }
   })
 
@@ -56,8 +57,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
       {
         key: 'service.name',
         value: {
-          stringValue:
-            'unknown_service:/Users/ovca/.nvm/versions/node/v18.16.0/bin/node'
+          stringValue: 'test-service'
         }
       },
       {
@@ -259,7 +259,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   hasStrict(
     JSON.parse(lines[lines.length - 1]),
-    (expectedLines[expectedLines.length - 1]),
+    expectedLines[expectedLines.length - 1],
     'extra bindings are stored'
   )
 })

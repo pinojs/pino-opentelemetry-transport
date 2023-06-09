@@ -9,6 +9,7 @@ const {
   // BatchLogRecordProcessor, // TODO: have option to use batch processor as well
   InMemoryLogRecordExporter
 } = require('@opentelemetry/sdk-logs')
+const { Resource } = require('@opentelemetry/resources')
 const { OTLPLogsExporter } = require('@opentelemetry/exporter-logs-otlp-grpc')
 
 const DEFAULT_MESSAGE_KEY = 'msg'
@@ -32,6 +33,7 @@ const DEFAULT_MESSAGE_KEY = 'msg'
  *
  * @typedef {Object} Options
  * @property {string} loggerName
+ * @property {string} serviceName
  * @property {string} serviceVersion
  * @property {boolean} includeTraceContext
  * @property {string} [messageKey="msg"]
@@ -43,7 +45,10 @@ module.exports = async function (opts) {
     messageKey: opts.messageKey || DEFAULT_MESSAGE_KEY
   }
   const loggerProvider = new LoggerProvider({
-    resource: {} // TODO: pass in resource through opts
+    resource: new Resource({
+      'service.name': opts.serviceName,
+      'service.version': opts.serviceVersion
+    })
   })
   loggerProvider.addLogRecordProcessor(
     new SimpleLogRecordProcessor(new OTLPLogsExporter())
