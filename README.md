@@ -46,7 +46,7 @@ Create the log file to be mounted by OTLP collector container
 
 Run the OTLP collector in a container
 
-```docker-compose up -d```
+```npm run docker-run```
 
 Run example.js
 
@@ -54,7 +54,7 @@ Run example.js
 
 Observe the logs
 
-```tail -f otlp-logs.log```
+```tail -f /tmp/test-logs/otlp-logs.log```
 
 Note that not all log entries will immediately be written to the `otlp-logs.log` file. The collector will flush to disk eventualy. The flush will be forced if the collector receives a kill signal.
 
