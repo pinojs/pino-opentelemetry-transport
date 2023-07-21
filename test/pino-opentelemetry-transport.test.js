@@ -32,7 +32,8 @@ test('translate Pino log format to Open Telemetry data format for each log level
     options: {
       loggerName: 'test-logger-name',
       serviceVersion: 'test-service-version',
-      serviceName: 'test-service'
+      serviceName: 'test-service',
+      useBatchProcessor: false // make sure all logs are flushed immediately
     }
   })
 
@@ -68,7 +69,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
         key: 'telemetry.sdk.name',
         value: { stringValue: 'opentelemetry' }
       },
-      { key: 'telemetry.sdk.version', value: { stringValue: '1.13.0' } }
+      { key: 'telemetry.sdk.version', value: { stringValue: '1.15.0' } }
     ]
   }
 
