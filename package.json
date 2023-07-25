@@ -4,7 +4,6 @@
   "description": "OpenTelemetry transport for Pino",
   "main": "pino-opentelemetry-transport.js",
   "scripts": {
-    "prepare": "husky install",
     "validate-and-test": "standard | snazzy && tap test/*.test.js --branches=60 --coverage-report=lcovonly && tsd",
     "test": "npm run validate-and-test",
     "test-ci": "standard | snazzy && tap test/otlp-logger.test.js --branches=60 --coverage-report=lcovonly && tsd",
@@ -23,8 +22,8 @@
   },
   "types": "./pino-opentelemetry-transport.d.ts",
   "devDependencies": {
+    "@fastify/pre-commit": "^2.0.2",
     "@types/node": "^17.0.0",
-    "husky": "^7.0.0",
     "pino": "^7.9.2",
     "pino-pretty": "^7.6.0",
     "require-inject": "^1.4.4",
@@ -40,5 +39,8 @@
   },
   "tsd": {
     "directory": "./test/types"
-  }
+  },
+  "pre-commit": [
+    "test"
+  ]
 }
