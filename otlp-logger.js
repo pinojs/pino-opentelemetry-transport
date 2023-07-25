@@ -135,8 +135,8 @@ function toOpenTelemetry (sourceObject, { messageKey }) {
     ...attributes
   } = sourceObject
 
-  const severityNumber = SEVERITY_NUMBER_MAP[sourceObject.level] ?? SEVERITY_NUMBER_MAP[60]
-  const severityText = SEVERITY_NAME_MAP[severityNumber]
+  const severityNumber = SEVERITY_NUMBER_MAP[sourceObject.level] ?? SeverityNumber.UNSPECIFIED
+  const severityText = SEVERITY_NAME_MAP[severityNumber] ?? 'UNSPECIFIED'
 
   return {
     timestamp: time * 10e6,

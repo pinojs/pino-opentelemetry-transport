@@ -89,8 +89,8 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
   match(records[5]._severityNumber, 21)
   match(records[5]._severityText, 'FATAL')
   // In case of unexpected severity number, the severity number is set to the highest value.
-  match(records[6]._severityNumber, 21)
-  match(records[6]._severityText, 'FATAL')
+  match(records[6]._severityNumber, 0)
+  match(records[6]._severityText, 'UNSPECIFIED')
 
   logger.shutdown()
 
