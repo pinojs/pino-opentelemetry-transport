@@ -6,8 +6,7 @@ const {
   BatchLogRecordProcessor
 } = require('@opentelemetry/sdk-logs')
 
-const { SeverityNumber } = require('@opentelemetry/api-logs')
-const { logs } = require('@opentelemetry/api-logs')
+const { SeverityNumber, logs } = require('@opentelemetry/api-logs')
 const { Resource } = require('@opentelemetry/resources')
 
 const DEFAULT_MESSAGE_KEY = 'msg'
