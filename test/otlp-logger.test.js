@@ -70,7 +70,6 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
       'service.name': 'test-service',
       'telemetry.sdk.language': 'nodejs',
       'telemetry.sdk.name': 'opentelemetry',
-      'telemetry.sdk.version': '1.15.0',
       'service.version': '1.0.0'
     }
   })

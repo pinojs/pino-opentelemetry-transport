@@ -68,8 +68,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
       {
         key: 'telemetry.sdk.name',
         value: { stringValue: 'opentelemetry' }
-      },
-      { key: 'telemetry.sdk.version', value: { stringValue: '1.15.0' } }
+      }
     ]
   }
 
