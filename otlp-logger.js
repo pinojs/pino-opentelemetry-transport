@@ -65,7 +65,7 @@ function getOtlpLogger (opts) {
 /**
  * If the source format has only a single severity that matches the meaning of the range
  * then it is recommended to assign that severity the smallest value of the range.
- * https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#mapping-of-severitynumber
+ * https://github.com/open-telemetry/opentelemetry-specification/blob/fc8289b8879f3a37e1eba5b4e445c94e74b20359/specification/logs/data-model.md#mapping-of-severitynumber
  */
 const SEVERITY_NUMBER_MAP = {
   10: SeverityNumber.TRACE,
@@ -76,7 +76,7 @@ const SEVERITY_NUMBER_MAP = {
   60: SeverityNumber.FATAL
 }
 
-// https://github.com/open-telemetry/opentelemetry-specification/blob/main/specification/logs/data-model.md#displaying-severity
+// https://github.com/open-telemetry/opentelemetry-specification/blob/fc8289b8879f3a37e1eba5b4e445c94e74b20359/specification/logs/data-model.md#displaying-severity
 const SEVERITY_NAME_MAP = {
   1: 'TRACE',
   2: 'TRACE2',
