@@ -4,6 +4,7 @@
 const { getOtlpLogger } = require('../otlp-logger')
 const { test } = require('tap')
 const { InMemoryLogRecordExporter } = require('@opentelemetry/sdk-logs')
+const { timeInputToHrTime } = require('@opentelemetry/core')
 
 test('otlp logger logs a record in log exporter and maps all log levels correctly', async ({
   match,
@@ -22,10 +23,12 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
     useBatchProcessor: false
   })
 
+  const testStart = Date.now()
+
   const testLogEntryBase = {
     msg: 'test message',
     pid: 123,
-    time: 1688655329273,
+    time: testStart,
     hostname: 'test-hostname'
   }
 
@@ -61,7 +64,7 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
   const records = exporter.getFinishedLogRecords()
 
   same(records.length, 7)
-  match(records[0].hrTime, [16886553292730000, 360000000])
+  match(records[0].hrTime, timeInputToHrTime(testStart))
   match(records[0]._severityNumber, 1)
   match(records[0]._severityText, 'TRACE')
   match(records[0]._body, 'test message')
