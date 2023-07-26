@@ -15,7 +15,11 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
 
   const logger = getOtlpLogger({
     loggerName: 'test-logger',
-    serviceName: 'test-service',
+    resourceAttributes: {
+      'service.version': '1.0.0',
+      'service.name': 'test-service',
+      foo: 'bar'
+    },
     serviceVersion: '1.0.0',
     includeTraceContext: true,
     messageKey: 'msg',
@@ -73,7 +77,8 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
       'service.name': 'test-service',
       'telemetry.sdk.language': 'nodejs',
       'telemetry.sdk.name': 'opentelemetry',
-      'service.version': '1.0.0'
+      'service.version': '1.0.0',
+      foo: 'bar'
     }
   })
   match(records[0].instrumentationScope, {

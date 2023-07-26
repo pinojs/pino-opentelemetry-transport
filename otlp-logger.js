@@ -7,28 +7,43 @@ const {
 } = require('@opentelemetry/sdk-logs')
 
 const { SeverityNumber, logs } = require('@opentelemetry/api-logs')
-const { Resource } = require('@opentelemetry/resources')
+const {
+  Resource,
+  detectResourcesSync,
+  envDetectorSync,
+  hostDetectorSync,
+  osDetectorSync,
+  processDetector
+} = require('@opentelemetry/resources')
 
 const DEFAULT_MESSAGE_KEY = 'msg'
 
 /**
  * @typedef {Object} Options
  * @property {string} loggerName
- * @property {string} serviceName
  * @property {string} serviceVersion
+ * @property {Object} [resourceAttributes={}]
  * @property {boolean} includeTraceContext
  * @property {import('@opentelemetry/sdk-logs').LogRecordExporter} [logRecordExporter]
  * @property {boolean} [useBatchProcessor=true]
+ * @property {boolean} [debugOtlp=false]
  * @property {string} [messageKey="msg"]
  *
  * @param {Options} opts
  */
 function getOtlpLogger (opts) {
+  const detectedResource = detectResourcesSync({
+    detectors: [
+      envDetectorSync,
+      hostDetectorSync,
+      osDetectorSync,
+      processDetector
+    ]
+  })
   const loggerProvider = new LoggerProvider({
-    resource: new Resource({
-      'service.name': opts.serviceName,
-      'service.version': opts.serviceVersion
-    })
+    resource: detectedResource.merge(
+      new Resource({ ...opts.resourceAttributes })
+    )
   })
 
   const recordProcessor =
@@ -135,7 +150,8 @@ function toOpenTelemetry (sourceObject, { messageKey }) {
     ...attributes
   } = sourceObject
 
-  const severityNumber = SEVERITY_NUMBER_MAP[sourceObject.level] ?? SeverityNumber.UNSPECIFIED
+  const severityNumber =
+    SEVERITY_NUMBER_MAP[sourceObject.level] ?? SeverityNumber.UNSPECIFIED
   const severityText = SEVERITY_NAME_MAP[severityNumber] ?? 'UNSPECIFIED'
 
   return {
