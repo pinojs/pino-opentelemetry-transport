@@ -31,8 +31,11 @@ test('translate Pino log format to Open Telemetry data format for each log level
     target: '..',
     options: {
       loggerName: 'test-logger-name',
+      resourceAttributes: {
+        'service.name': 'test-service',
+        'service.version': 'test-service-version'
+      },
       serviceVersion: 'test-service-version',
-      serviceName: 'test-service',
       useBatchProcessor: false // make sure all logs are flushed immediately
     }
   })
