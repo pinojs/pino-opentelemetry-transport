@@ -5,7 +5,7 @@
 <!-- [![Coverage Status](https://coveralls.io/repos/github/Vunovati/pino-opentelemetry-transport/badge.svg?branch=main)](https://coveralls.io/github/Vunovati/pino-opentelemetry-transport?branch=main) -->
 [![js-standard-style](https://img.shields.io/badge/code%20style-standard-brightgreen.svg?style=flat)](https://standardjs.com/)
 
-Pino transport for OpenTelemetry. Outputs logs in the [OpenTelemetry Log Data Model](https://github.com/open-telemetry/opentelemetry-specification/blob/fc8289b8879f3a37e1eba5b4e445c94e74b20359/specification/logs/data-model.md) and sends them to OTLP logs collector.
+Pino transport for OpenTelemetry. Outputs logs in the [OpenTelemetry Log Data Model](https://github.com/open-telemetry/opentelemetry-specification/blob/fc8289b8879f3a37e1eba5b4e445c94e74b20359/specification/logs/data-model.md) and sends them to an OTLP logs collector.
 
 ## Install
 
@@ -21,6 +21,45 @@ The OTLP collector URL can be set by setting either of the following environment
 `OTEL_EXPORTER_OTLP_ENDPOINT`
 
 ## Usage
+
+### Minimalistic example
+
+Make sure you have access to an OTEL collector.
+
+To start quickly, create a minimal configuration for OTEL collector in the `otel-collector-config.yaml` file:
+
+```
+receivers:
+  otlp:
+    protocols:
+      grpc:
+
+exporters:
+  file:
+    path: ./etc/test-logs/otlp-logs.log
+    flush_interval: 1
+
+  logging:
+    verbosity: basic
+  
+processors:
+  batch:
+
+service:
+  pipelines:
+    logs:
+      receivers: [otlp]
+      processors: []
+      exporters: [logging, file]
+```
+
+The collector can then be ran with:
+
+```
+docker run --volume=$(pwd)/otel-collector-config.yaml:/etc/otel-collector-config.yaml:rw --volume=/tmp/test-logs:/etc/test-logs:rw -p 4317:4317 -d otel/opentelemetry-collector-contrib:latest --config=/etc/otel-collector-config.yaml
+```
+
+Create an index.js file containing
 
 ```js
 const pino = require('pino')
@@ -38,13 +77,20 @@ transport.on('ready', () => {
 })
 ```
 
-(Also works in CommonJS)
+Install Pino and pino-opentelemetry-transport
 
-## Test locally
+```
+npm install pino pino-opentelemetry-transport
+```
 
-Create the log file to be mounted by OTLP collector container
 
-```touch otlp-logs.log```
+Run the service setting the `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` and `OTEL_RESOURCE_ATTRIBUTES` env vars
+
+```
+OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://localhost:4317 OTEL_RESOURCE_ATTRIBUTES="service.name=my-service,service.version=1.2.3" node index.js
+```
+
+## Test the repo locally
 
 Run the OTLP collector in a container
 
