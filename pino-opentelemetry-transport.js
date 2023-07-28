@@ -11,9 +11,9 @@ const { getOtlpLogger } = require('./otlp-logger')
  *
  * @typedef {Object} Options
  * @property {string} loggerName
- * @property {string} serviceName
  * @property {string} serviceVersion
- * @property {boolean} includeTraceContext
+ * @property {Object} [resourceAttributes={}]
+ * @property {boolean} [useBatchProcessor=true]
  * @property {string} [messageKey="msg"]
  *
  * @param {Options} opts

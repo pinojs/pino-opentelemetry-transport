@@ -104,13 +104,15 @@ Observe the logs
 
 ```tail -f /tmp/test-logs/otlp-logs.log```
 
-Note that not all log entries will immediately be written to the `otlp-logs.log` file. The collector will flush to the disk eventualy. The flush will be forced if the collector receives a kill signal.
+Note that not all log entries will immediately be written to the `otlp-logs.log` file. The collector will flush to the disk eventually. The flush will be forced if the collector receives a kill signal.
 
 ## Options
 
 When using the transport, the following options can be used:
 
 * `messageKey`: The key of the log message to be used as the OpenTelemetry log entry Body. Optional, value `msg` used by default (like in Pino itself).
+* `resourceAttributes`: Object containing [resource attributes](https://opentelemetry.io/docs/instrumentation/js/resources/).
+
 ## License
 
 MIT

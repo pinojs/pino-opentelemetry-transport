@@ -69,9 +69,9 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
 
   same(records.length, 7)
   match(records[0].hrTime, timeInputToHrTime(testStart))
-  match(records[0]._severityNumber, 1)
-  match(records[0]._severityText, 'TRACE')
-  match(records[0]._body, 'test message')
+  match(records[0].severityNumber, 1)
+  match(records[0].severityText, 'TRACE')
+  match(records[0].body, 'test message')
   match(records[0].resource, {
     _attributes: {
       'service.name': 'test-service',
@@ -86,19 +86,19 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
     version: '1.0.0'
   })
 
-  match(records[1]._severityNumber, 5)
-  match(records[1]._severityText, 'DEBUG')
-  match(records[2]._severityNumber, 9)
-  match(records[2]._severityText, 'INFO')
-  match(records[3]._severityNumber, 13)
-  match(records[3]._severityText, 'WARN')
-  match(records[4]._severityNumber, 17)
-  match(records[4]._severityText, 'ERROR')
-  match(records[5]._severityNumber, 21)
-  match(records[5]._severityText, 'FATAL')
+  match(records[1].severityNumber, 5)
+  match(records[1].severityText, 'DEBUG')
+  match(records[2].severityNumber, 9)
+  match(records[2].severityText, 'INFO')
+  match(records[3].severityNumber, 13)
+  match(records[3].severityText, 'WARN')
+  match(records[4].severityNumber, 17)
+  match(records[4].severityText, 'ERROR')
+  match(records[5].severityNumber, 21)
+  match(records[5].severityText, 'FATAL')
   // In case of unexpected severity number, the severity number is set to the highest value.
-  match(records[6]._severityNumber, 0)
-  match(records[6]._severityText, 'UNSPECIFIED')
+  match(records[6].severityNumber, 0)
+  match(records[6].severityText, 'UNSPECIFIED')
 
   logger.shutdown()
 
