@@ -26,7 +26,6 @@ const DEFAULT_MESSAGE_KEY = 'msg'
  * @property {boolean} includeTraceContext
  * @property {import('@opentelemetry/sdk-logs').LogRecordExporter} [logRecordExporter]
  * @property {boolean} [useBatchProcessor=true]
- * @property {boolean} [debugOtlp=false]
  * @property {string} [messageKey="msg"]
  *
  * @param {Options} opts
