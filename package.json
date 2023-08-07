@@ -23,7 +23,7 @@
   "types": "./pino-opentelemetry-transport.d.ts",
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
-    "@types/node": "^17.0.0",
+    "@types/node": "^20.4.8",
     "pino": "^8.14.1",
     "require-inject": "^1.4.4",
     "snazzy": "^9.0.0",
