@@ -13,6 +13,7 @@
     "docker-kill": "docker kill $(docker ps -qf expose=4317) || echo 'No running docker container with port 4317 exposed'"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
+  "repository": "github:Vunovati/pino-opentelemetry-transport",
   "license": "MIT",
   "dependencies": {
     "@opentelemetry/api-logs": "^0.41.0",
