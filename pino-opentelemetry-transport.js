@@ -15,13 +15,14 @@ const { getOtlpLogger } = require('./otlp-logger')
  * @property {Object} [resourceAttributes={}]
  * @property {boolean} [useBatchProcessor=true]
  * @property {string} [messageKey="msg"]
+ * @property {import('@opentelemetry/sdk-logs').LogRecordExporter} [logRecordExporter]
  *
  * @param {Options} opts
  */
 module.exports = async function (opts) {
   const logger = getOtlpLogger({
-    ...opts,
-    logRecordExporter: new OTLPLogExporter()
+    logRecordExporter: new OTLPLogExporter(),
+    ...opts
   })
 
   return build(
