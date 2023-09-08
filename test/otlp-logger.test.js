@@ -36,9 +36,17 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
     hostname: 'test-hostname'
   }
 
+  const testTraceId = '12345678901234567890123456789012'
+  const testSpanId = '1234567890123456'
+  const testTraceFlags = '01'
+
   logger.emit({
     ...testLogEntryBase,
-    level: 10
+    level: 10,
+    trace_id: testTraceId,
+    span_id: testSpanId,
+    trace_flags: testTraceFlags,
+    testAttribute: 'test'
   })
   logger.emit({
     ...testLogEntryBase,
@@ -84,6 +92,15 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
   match(records[0].instrumentationScope, {
     name: 'test-logger',
     version: '1.0.0'
+  })
+  match(records[0].spanContext, {
+    traceId: testTraceId,
+    spanId: testSpanId,
+    traceFlags: testTraceFlags,
+    isRemote: true
+  })
+  same(records[0].attributes, {
+    testAttribute: 'test'
   })
 
   match(records[1].severityNumber, 5)
