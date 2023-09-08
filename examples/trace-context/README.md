@@ -1,4 +1,4 @@
-#HTTP Server with trace context propagation
+# HTTP Server with trace context propagation
 
 ## Running the example
 

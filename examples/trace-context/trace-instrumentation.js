@@ -5,14 +5,12 @@ const opentelemetry = require('@opentelemetry/sdk-node')
 const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http')
 const { PinoInstrumentation } = require('@opentelemetry/instrumentation-pino')
 const { Resource } = require('@opentelemetry/resources')
-// const { OTLPTraceExporter } = require('@opentelemetry/exporter-trace-otlp-http')
 const { ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-node')
 const {
   SemanticResourceAttributes
 } = require('@opentelemetry/semantic-conventions')
 
 const traceExporter = new ConsoleSpanExporter()
-// const traceExporter = new OTLPTraceExporter()
 
 const instrumentations = [
   new HttpInstrumentation(),
