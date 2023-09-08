@@ -3,15 +3,44 @@
 const { readFile } = require('fs/promises')
 const { truncateSync } = require('fs')
 const { join } = require('path')
-const { test, afterEach } = require('tap')
+const { test, afterEach, beforeEach } = require('tap')
 const { promisify } = require('util')
 const requireInject = require('require-inject')
+const { GenericContainer, Wait } = require('testcontainers')
 
 const sleep = promisify(setTimeout)
 
 const logFile = join('/', 'tmp', 'test-logs', 'otlp-logs.log')
-afterEach(() => {
-  truncateSync(logFile)
+let otlpCollectorContainer
+
+beforeEach(async () => {
+  const container = new GenericContainer(
+    'otel/opentelemetry-collector-contrib:latest'
+  )
+
+  otlpCollectorContainer = await container
+    .withExposedPorts(4317)
+    .withBindMounts([
+      {
+        source: join(__dirname, '..', 'otel-collector-config.yaml'),
+        target: '/etc/otel-collector-config.yaml'
+      },
+      {
+        source: '/tmp/test-logs',
+        target: '/etc/test-logs',
+        mode: 'rw'
+      }
+    ])
+    .withCommand('--config=/etc/otel-collector-config.yaml')
+    .withWaitStrategy(Wait.forLogMessage('Everything is ready'))
+    .start()
+
+  sleep(2000)
+})
+
+afterEach(async () => {
+  //truncateSync(logFile)
+  await otlpCollectorContainer?.stop()
 })
 
 const MOCK_HOSTNAME = 'hostname'
