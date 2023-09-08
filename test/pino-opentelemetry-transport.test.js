@@ -3,14 +3,27 @@
 const { readFile } = require('fs/promises')
 const { truncateSync } = require('fs')
 const { join } = require('path')
-const { test, afterEach } = require('tap')
+const { test, afterEach, before } = require('tap')
 const { promisify } = require('util')
 const requireInject = require('require-inject')
+const { DockerComposeEnvironment, Wait } = require('testcontainers')
 
 const sleep = promisify(setTimeout)
 
 const logFile = join('/', 'tmp', 'test-logs', 'otlp-logs.log')
-afterEach(() => {
+
+before(async () => {
+  const composeFilePath = join(__dirname, '..')
+  const composeFile = 'docker-compose.yaml'
+
+  const dockerComposeEnv = new DockerComposeEnvironment(composeFilePath, composeFile).withWaitStrategy(
+    'otel-collector-1', Wait.forLogMessage('Everything is ready')
+  )
+
+  await dockerComposeEnv.up()
+})
+
+afterEach(async () => {
   truncateSync(logFile)
 })
 

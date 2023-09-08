@@ -7,10 +7,7 @@
     "validate-and-test": "standard | snazzy && tap test/*.test.js --branches=60 --coverage-report=lcovonly && tsd",
     "test": "npm run validate-and-test",
     "test-ci": "standard | snazzy && tap test/otlp-logger.test.js --branches=60 --coverage-report=lcovonly && tsd",
-    "pretest": "npm run docker-run",
-    "posttest": "npm run docker-kill",
-    "docker-run": "docker run --volume=$(pwd)/otel-collector-config.yaml:/etc/otel-collector-config.yaml:rw --volume=/tmp/test-logs:/etc/test-logs:rw -p 4317:4317 -d otel/opentelemetry-collector-contrib:latest --config=/etc/otel-collector-config.yaml",
-    "docker-kill": "docker kill $(docker ps -qf expose=4317) || echo 'No running docker container with port 4317 exposed'"
+    "docker-run": "docker compose up"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
   "repository": "github:Vunovati/pino-opentelemetry-transport",
@@ -30,6 +27,7 @@
     "snazzy": "^9.0.0",
     "standard": "^17.1.0",
     "tap": "^16.0.0",
+    "testcontainers": "^10.2.1",
     "tsd": "^0.28.1"
   },
   "standard": {
