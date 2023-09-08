@@ -107,7 +107,8 @@ Observe the logs
 Note that not all log entries will immediately be written to the `otlp-logs.log` file. The collector will flush to the disk eventually. The flush will be forced if the collector receives a kill signal.
 
 ## Examples
-[HTTP Server with trace context propagation](./examples/trace-context)
+* [HTTP Server with trace context propagation](./examples/trace-context)
+* [Sending logs to Grafana Loki](./examples/grafana-loki)
 
 ## Options
 
