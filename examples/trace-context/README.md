@@ -2,7 +2,7 @@
 
 ## Running the example
 
-1. Run the [docker compose file](/docker-compose.yaml) in the root of the repo, which will boot the OTLP collector.
+1. Run the [docker compose file](/docker-compose.yaml) in the root of the repo, which will boot the OTLP collector:
 `docker compose up`
 
 2. Run the http server by [preloading](https://opentelemetry.io/docs/instrumentation/js/getting-started/nodejs/#run-the-instrumented-app) the instrumentation code.
@@ -11,6 +11,9 @@ node -r "./trace-instrumentation.js" http-server.js
 ```
 
 3. Access the app at [http://localhost:8080](http://localhost:8080)
+
+
+### Explanation
 
 The request handler function in http-server will create a log entry. Since pino is instrumented with [@opentelemetry/instrumentation-pino](https://www.npmjs.com/package/@opentelemetry/instrumentation-pino) in `trace-instrumentation.js`, it will also add the span context values as attributes [(`trace_id`, `span_id`, `trace_flags`)](https://github.com/open-telemetry/opentelemetry-js-contrib/tree/main/plugins/node/opentelemetry-instrumentation-pino#fields-added-to-pino-log-objects).
 
