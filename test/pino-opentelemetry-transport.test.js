@@ -3,44 +3,28 @@
 const { readFile } = require('fs/promises')
 const { truncateSync } = require('fs')
 const { join } = require('path')
-const { test, afterEach, beforeEach } = require('tap')
+const { test, afterEach, before } = require('tap')
 const { promisify } = require('util')
 const requireInject = require('require-inject')
-const { GenericContainer, Wait } = require('testcontainers')
+const { DockerComposeEnvironment, Wait } = require('testcontainers')
 
 const sleep = promisify(setTimeout)
 
 const logFile = join('/', 'tmp', 'test-logs', 'otlp-logs.log')
-let otlpCollectorContainer
 
-beforeEach(async () => {
-  const container = new GenericContainer(
-    'otel/opentelemetry-collector-contrib:latest'
+before(async () => {
+  const composeFilePath = join(__dirname, '..')
+  const composeFile = 'docker-compose.yaml'
+
+  const dockerComposeEnv = new DockerComposeEnvironment(composeFilePath, composeFile).withWaitStrategy(
+    'otel-collector-1', Wait.forLogMessage('Everything is ready')
   )
 
-  otlpCollectorContainer = await container
-    .withExposedPorts(4317)
-    .withBindMounts([
-      {
-        source: join(__dirname, '..', 'otel-collector-config.yaml'),
-        target: '/etc/otel-collector-config.yaml'
-      },
-      {
-        source: '/tmp/test-logs',
-        target: '/etc/test-logs',
-        mode: 'rw'
-      }
-    ])
-    .withCommand('--config=/etc/otel-collector-config.yaml')
-    .withWaitStrategy(Wait.forLogMessage('Everything is ready'))
-    .start()
-
-  sleep(2000)
+  await dockerComposeEnv.up()
 })
 
 afterEach(async () => {
-  //truncateSync(logFile)
-  await otlpCollectorContainer?.stop()
+  truncateSync(logFile)
 })
 
 const MOCK_HOSTNAME = 'hostname'
