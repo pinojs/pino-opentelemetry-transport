@@ -5,6 +5,7 @@ const {
   SimpleLogRecordProcessor,
   BatchLogRecordProcessor
 } = require('@opentelemetry/sdk-logs')
+const api = require('@opentelemetry/api')
 
 const { SeverityNumber, logs } = require('@opentelemetry/api-logs')
 const {
@@ -146,19 +147,38 @@ function toOpenTelemetry (sourceObject, { messageKey }) {
     hostname,
     pid,
     [messageKey]: msg,
-    ...attributes
+    ...rawAttributes
   } = sourceObject
 
   const severityNumber =
     SEVERITY_NUMBER_MAP[sourceObject.level] ?? SeverityNumber.UNSPECIFIED
   const severityText = SEVERITY_NAME_MAP[severityNumber] ?? 'UNSPECIFIED'
 
+  let context = api.context.active()
+  /* eslint-disable camelcase */
+  const { trace_id, span_id, trace_flags, ...attributes } = rawAttributes
+
+  if (
+    typeof trace_id !== 'undefined' &&
+    typeof span_id !== 'undefined' &&
+    typeof trace_flags !== 'undefined'
+  ) {
+    context = api.trace.setSpanContext(context, {
+      traceId: trace_id,
+      spanId: span_id,
+      traceFlags: trace_flags,
+      isRemote: true
+    })
+  }
+  /* eslint-enable camelcase */
+
   return {
     timestamp: time,
     body: msg,
     severityNumber,
     attributes,
-    severityText
+    severityText,
+    context
   }
 }
 

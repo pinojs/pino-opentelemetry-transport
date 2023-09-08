@@ -16,8 +16,12 @@ before(async () => {
   const composeFilePath = join(__dirname, '..')
   const composeFile = 'docker-compose.yaml'
 
-  const dockerComposeEnv = new DockerComposeEnvironment(composeFilePath, composeFile).withWaitStrategy(
-    'otel-collector-1', Wait.forLogMessage('Everything is ready')
+  const dockerComposeEnv = new DockerComposeEnvironment(
+    composeFilePath,
+    composeFile
+  ).withWaitStrategy(
+    'otel-collector-1',
+    Wait.forLogMessage('Everything is ready')
   )
 
   await dockerComposeEnv.up()
@@ -93,9 +97,18 @@ test('translate Pino log format to Open Telemetry data format for each log level
     version: 'test-service-version'
   }
 
+  const testTraceId = '12345678901234567890123456789012'
+  const testSpanId = '1234567890123456'
+  const testTraceFlags = '01'
+
   const extra = {
     foo: 'bar',
-    baz: 'qux'
+    baz: 'qux',
+    /* eslint-disable camelcase */
+    trace_id: testTraceId,
+    span_id: testSpanId,
+    trace_flags: testTraceFlags
+    /* eslint-enable camelcase */
   }
 
   logger.trace(extra, 'test trace')
@@ -248,8 +261,8 @@ test('translate Pino log format to Open Telemetry data format for each log level
                   severityNumber: 1,
                   severityText: 'TRACE',
                   body: { stringValue: 'test trace' },
-                  traceId: '',
-                  spanId: '',
+                  traceId: testTraceId,
+                  spanId: testSpanId,
                   attributes: [
                     { key: 'foo', value: { stringValue: 'bar' } },
                     { key: 'baz', value: { stringValue: 'qux' } }
