@@ -1,5 +1,16 @@
 # Sending logs to Grafana Loki
 
+```mermaid
+graph LR;
+    pino["Pino Opentelemetry Transport"]
+    otel["OTEL Collector"]
+    loki["Loki"]
+    grafana["Grafana"]
+    pino-->otel;
+    otel-->loki;
+    loki-->grafana;
+```
+
 ## Running the example
 
 ### Local infrastructure
@@ -19,4 +30,5 @@ The logs can be inspected in Grafana UI at
 
 ### Generating logs
 Run the [trace-context](../trace-context) example, but skip the `docker compose up` part
+
 
