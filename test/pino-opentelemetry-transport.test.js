@@ -53,7 +53,12 @@ test('translate Pino log format to Open Telemetry data format for each log level
         'service.version': 'test-service-version'
       },
       serviceVersion: 'test-service-version',
-      useBatchProcessor: false // make sure all logs are flushed immediately
+      logRecordProcessorOptions: {
+        recordProcessorType: 'simple',
+        exporterOptions: {
+          protocol: 'grpc'
+        }
+      }
     }
   })
 

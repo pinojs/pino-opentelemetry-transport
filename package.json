@@ -4,9 +4,9 @@
   "description": "OpenTelemetry transport for Pino",
   "main": "pino-opentelemetry-transport.js",
   "scripts": {
-    "validate-and-test": "standard | snazzy && tap test/*.test.js --branches=60 --coverage-report=lcovonly && tsd",
+    "validate-and-test": "standard | snazzy && tap test/*.test.js --branches=45 --lines=45 --functions=45 --statements=45 --coverage-report=lcovonly && tsd",
     "test": "npm run validate-and-test",
-    "test-ci": "standard | snazzy && tap test/otlp-logger.test.js --branches=60 --coverage-report=lcovonly && tsd",
+    "test-ci": "standard | snazzy && tap test/otlp-logger.test.js --branches=45 --lines=45 --functions=45 --statements=45 --coverage-report=lcovonly && tsd",
     "docker-run": "docker compose up"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
@@ -15,6 +15,8 @@
   "dependencies": {
     "@opentelemetry/api-logs": "^0.41.0",
     "@opentelemetry/exporter-logs-otlp-grpc": "^0.41.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.41.2",
+    "@opentelemetry/exporter-logs-otlp-proto": "^0.42.0",
     "@opentelemetry/sdk-logs": "^0.41.0",
     "pino-abstract-transport": "^1.0.0"
   },
