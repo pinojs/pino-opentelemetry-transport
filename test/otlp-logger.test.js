@@ -5,6 +5,7 @@ const { getOtlpLogger } = require('../otlp-logger')
 const { test } = require('tap')
 const { InMemoryLogRecordExporter } = require('@opentelemetry/sdk-logs')
 const { timeInputToHrTime } = require('@opentelemetry/core')
+const { SimpleLogRecordProcessor } = require('@opentelemetry/sdk-logs')
 
 test('otlp logger logs a record in log exporter and maps all log levels correctly', async ({
   match,
@@ -22,8 +23,7 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
     },
     serviceVersion: '1.0.0',
     messageKey: 'msg',
-    logRecordExporter: exporter,
-    useBatchProcessor: false
+    logRecordProcessor: new SimpleLogRecordProcessor(exporter)
   })
 
   const testStart = Date.now()
