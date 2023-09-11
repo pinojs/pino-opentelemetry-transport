@@ -24,7 +24,6 @@ const DEFAULT_MESSAGE_KEY = 'msg'
  * @property {string} loggerName
  * @property {string} serviceVersion
  * @property {Object} [resourceAttributes={}]
- * @property {boolean} includeTraceContext
  * @property {import('@opentelemetry/sdk-logs').LogRecordExporter} [logRecordExporter]
  * @property {boolean} [useBatchProcessor=true]
  * @property {string} [messageKey="msg"]
@@ -55,9 +54,7 @@ function getOtlpLogger (opts) {
 
   logs.setGlobalLoggerProvider(loggerProvider)
 
-  const logger = logs.getLogger(opts.loggerName, opts.serviceVersion, {
-    includeTraceContext: opts.includeTraceContext ?? true
-  })
+  const logger = logs.getLogger(opts.loggerName, opts.serviceVersion)
 
   const mapperOptions = {
     messageKey: opts.messageKey || DEFAULT_MESSAGE_KEY

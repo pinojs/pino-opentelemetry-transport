@@ -21,7 +21,6 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
       foo: 'bar'
     },
     serviceVersion: '1.0.0',
-    includeTraceContext: true,
     messageKey: 'msg',
     logRecordExporter: exporter,
     useBatchProcessor: false
