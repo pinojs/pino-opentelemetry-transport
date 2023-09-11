@@ -14,7 +14,7 @@
   "license": "MIT",
   "dependencies": {
     "@opentelemetry/api-logs": "^0.41.0",
-    "@opentelemetry/exporter-logs-otlp-grpc": "^0.41.0",
+    "@opentelemetry/exporter-logs-otlp-grpc": "^0.42.0",
     "@opentelemetry/sdk-logs": "^0.41.0",
     "pino-abstract-transport": "^1.0.0"
   },
