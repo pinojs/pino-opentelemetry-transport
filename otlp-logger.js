@@ -1,10 +1,6 @@
 'use strict'
 
-const {
-  LoggerProvider,
-  SimpleLogRecordProcessor,
-  BatchLogRecordProcessor
-} = require('@opentelemetry/sdk-logs')
+const { LoggerProvider } = require('@opentelemetry/sdk-logs')
 const api = require('@opentelemetry/api')
 
 const { SeverityNumber, logs } = require('@opentelemetry/api-logs') // TODO: optional import
@@ -42,9 +38,8 @@ const DEFAULT_MESSAGE_KEY = 'msg'
  * @typedef {Object} Options
  * @property {string} loggerName
  * @property {string} serviceVersion
+ * @property {import('@opentelemetry/sdk-logs').LogRecordProcessor} logRecordProcessor
  * @property {Object} [resourceAttributes={}]
- * @property {import('@opentelemetry/sdk-logs').LogRecordProcessor} [logRecordProcessor]
- * @property {LogRecordProcessorOptions} [logRecordProcessorOptions]
  * @property {string} [messageKey="msg"]
  *
  * @param {Options} opts
@@ -64,11 +59,7 @@ function getOtlpLogger (opts) {
     )
   })
 
-  const recordProcessor =
-    opts.logRecordProcessor ??
-    createLogRecordProcessor(opts.logRecordProcessorOptions)
-
-  loggerProvider.addLogRecordProcessor(recordProcessor)
+  loggerProvider.addLogRecordProcessor(opts.logRecordProcessor)
 
   logs.setGlobalLoggerProvider(loggerProvider)
 
@@ -89,77 +80,6 @@ function getOtlpLogger (opts) {
       return loggerProvider.shutdown()
     }
   }
-}
-
-/**
- * @typedef {"batch" | "simple"} RecordProcessorType
- * @typedef {Object} LogRecordProcessorOptions
- * @property {RecordProcessorType} recordProcessorType = "batch"
- * @property {ExporterOptions} [exporterOptions]
- * @property {import('@opentelemetry/sdk-logs').BufferConfig} exporterConfig
- *
- * @param {LogRecordProcessorOptions} opts
- * @returns {import('@opentelemetry/sdk-logs').LogRecordProcessor}
- */
-function createLogRecordProcessor (opts) {
-  const exporter = createExporter(opts?.exporterOptions)
-
-  if (opts?.recordProcessorType === 'simple') {
-    return new SimpleLogRecordProcessor(exporter)
-  }
-
-  return new BatchLogRecordProcessor(exporter)
-}
-
-/**
- * @typedef {Object} GrpcExporterOptions
- * @property {"grpc"} protocol
- * @property {import('@opentelemetry/otlp-grpc-exporter-base').OTLPGRPCExporterConfigNode} [grpcExporterOptions]
- *
- * @typedef {Object} HttpExporterOptions
- * @property {"http"} protocol
- * @property {import('@opentelemetry/otlp-exporter-base').OTLPExporterNodeConfigBase} [httpExporterOptions]
- *
- * @typedef {Object} ProtobufExporterOptions
- * @property {"http/protobuf"} protocol
- * @property {import('@opentelemetry/otlp-exporter-base').OTLPExporterNodeConfigBase} [protobufExporterOptions]
- *
- * @typedef {GrpcExporterOptions | HttpExporterOptions | ProtobufExporterOptions} ExporterOptions
- *
- * @param {ExporterOptions} exporterOptions
- * @returns {import('@opentelemetry/sdk-logs').LogRecordExporter}
- */
-function createExporter (exporterOptions) {
-  const exporterProtocol =
-    exporterOptions?.protocol ??
-    process.env.OTEL_EXPORTER_OTLP_LOGS_PROTOCOL ??
-    process.env.OTEL_EXPORTER_OTLP_PROTOCOL
-
-  if (exporterProtocol === 'grpc') {
-    const {
-      OTLPLogExporter
-    } = require('@opentelemetry/exporter-logs-otlp-grpc')
-    return new OTLPLogExporter(exporterOptions?.grpcExporterOptions)
-  }
-
-  if (exporterProtocol === 'http') {
-    const {
-      OTLPLogExporter
-    } = require('@opentelemetry/exporter-logs-otlp-http')
-    return new OTLPLogExporter(exporterOptions?.httpExporterOptions)
-  }
-
-  const {
-    OTLPLogsExporter,
-    OTLPLogExporter
-  } = require('@opentelemetry/exporter-logs-otlp-proto')
-
-  if (typeof OTLPLogExporter === 'function') {
-    return new OTLPLogExporter(exporterOptions?.protobufExporterOptions)
-  }
-
-  // TODO: remove this once https://github.com/open-telemetry/opentelemetry-js/issues/3812#issuecomment-1713830883 is resolved
-  return new OTLPLogsExporter(exporterOptions?.protobufExporterOptions)
 }
 
 /**
