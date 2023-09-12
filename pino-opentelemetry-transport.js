@@ -2,6 +2,7 @@
 
 const build = require('pino-abstract-transport')
 const { getOtlpLogger } = require('./otlp-logger')
+const createLogProcessor = require('./create-log-processor')
 
 /**
  * Pino OpenTelemetry transport
@@ -10,14 +11,16 @@ const { getOtlpLogger } = require('./otlp-logger')
  * @property {string} loggerName
  * @property {string} serviceVersion
  * @property {Object} [resourceAttributes={}]
- * @property {import('@opentelemetry/sdk-logs').LogRecordProcessor} [logRecordProcessor]
- * @property {LogRecordProcessorOptions} [logRecordProcessorOptions]
+ * @property {import('./create-log-processor').LogRecordProcessorOptions} [logRecordProcessorOptions]
  * @property {string} [messageKey="msg"]
  *
  * @param {Options} opts
  */
-module.exports = async function (opts) {
-  const logger = getOtlpLogger(opts)
+module.exports = async function ({ logRecordProcessorOptions, ...opts }) {
+  const logger = getOtlpLogger({
+    ...opts,
+    logRecordProcessor: createLogProcessor(logRecordProcessorOptions)
+  })
 
   return build(
     async function (/** @type { AsyncIterable<Bindings> } */ source) {

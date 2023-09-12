@@ -1,7 +1,10 @@
+'use strict'
+
+const path = require('path')
 const pino = require('pino')
 
 const transport = pino.transport({
-  target: '.'
+  target: path.join(__dirname, '..', '..', 'pino-opentelemetry-transport')
 })
 
 const logger = pino(transport)

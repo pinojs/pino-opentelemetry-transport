@@ -14,11 +14,49 @@ npm i pino-opentelemetry-transport
 ```
 
 ## Configuration
-The transport is using OpenTelemetry JS SDK, which can be configured using environment variables as described in [the docs](https://github.com/open-telemetry/opentelemetry-js/blob/d4a41bd815dd50703f692000a70c59235ad71959/experimental/packages/exporter-logs-otlp-grpc/README.md#environment-variable-configuration)
+### Protocol
+can be set to `http/protobuf`, `grpc`, `http` or `console` by using 
 
-The OTLP collector URL can be set by setting either of the following environment variables:
+* env var `OTEL_EXPORTER_OTLP_PROTOCOL` 
+* env var `OTEL_EXPORTER_OTLP_LOGS_PROTOCOL`
+* setting the exporterProtocol option
+
+Settings configured programmatically take precedence over environment variables. Per-signal environment variables take precedence over non-per-signal environment variables. This principle applies to all the configurations in this module.
+
+If no protocol is specified, `http/protobuf` is used as a default.
+
+### Exporter settings
+
+#### Collector URL
+
+Set either of the following environment variables:
 `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT`,
 `OTEL_EXPORTER_OTLP_ENDPOINT`
+
+#### Protocol-specific exporter configuration
+
+#### `http/protobuf`
+[Env vars in README](https://github.com/open-telemetry/opentelemetry-js/blob/d4a41bd815dd50703f692000a70c59235ad71959/experimental/packages/exporter-trace-otlp-proto/README.md#exporter-timeout-configuration)
+
+#### `grpc`
+[Environment Variable Configuration](https://github.com/open-telemetry/opentelemetry-js/blob/d4a41bd815dd50703f692000a70c59235ad71959/experimental/packages/exporter-logs-otlp-grpc/README.md#environment-variable-configuration)
+
+#### `http`
+[Env vars in README](https://github.com/open-telemetry/opentelemetry-js/blob/d4a41bd815dd50703f692000a70c59235ad71959/experimental/packages/exporter-trace-otlp-http/README.md#configuration-options-as-environment-variables)
+
+
+#### Processor-specific configuration
+If batch log processor is selected (is default), it can be configured using env vars described in the [OpenTelemetry specification](https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#batch-logrecord-processor)
+
+### Options
+When using the transport, the following options can be used to configure the transport programmatically:
+
+* `loggerName`: name to be used by the OpenTelemetry logger
+* `serviceVersion`: name to be used by the OpenTelemetry logger
+* `messageKey`: The key of the log message to be used as the OpenTelemetry log entry Body. Optional, value `msg` used by default (like in Pino itself). Optional
+* `resourceAttributes`: Object containing [resource attributes](https://opentelemetry.io/docs/instrumentation/js/resources/). Optional
+* `logRecordProcessorOptions`: a single object or an array of objects specifying the LogProcessor and LogExporter types and constructor params. Optional
+
 
 ## Usage
 
@@ -87,8 +125,14 @@ npm install pino pino-opentelemetry-transport
 Run the service setting the `OTEL_EXPORTER_OTLP_LOGS_ENDPOINT` and `OTEL_RESOURCE_ATTRIBUTES` env vars
 
 ```
-OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://localhost:4317 OTEL_RESOURCE_ATTRIBUTES="service.name=my-service,service.version=1.2.3" node index.js
+OTEL_EXPORTER_OTLP_LOGS_PROTOCOL='grpc' OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://localhost:4317 OTEL_RESOURCE_ATTRIBUTES="service.name=my-service,service.version=1.2.3" node index.js
 ```
+
+## Examples
+* [Minimalistic](./examples/minimalistic)
+* [HTTP Server with trace context propagation](./examples/trace-context)
+* [Sending logs to Grafana Loki](./examples/grafana-loki)
+* [Using Multiple Record Processors](./examples/using-multiple-record-processors)
 
 ## Test the repo locally
 
@@ -96,9 +140,9 @@ Run the OTLP collector in a container
 
 ```npm run docker-run```
 
-Run example.js
+Run an example
 
-```OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://localhost:4317 node example.js```
+```node examples/minimalistic/minimalistic.js```
 
 Observe the logs
 
@@ -106,16 +150,6 @@ Observe the logs
 
 Note that not all log entries will immediately be written to the `otlp-logs.log` file. The collector will flush to the disk eventually. The flush will be forced if the collector receives a kill signal.
 
-## Examples
-* [HTTP Server with trace context propagation](./examples/trace-context)
-* [Sending logs to Grafana Loki](./examples/grafana-loki)
-
-## Options
-
-When using the transport, the following options can be used:
-
-* `messageKey`: The key of the log message to be used as the OpenTelemetry log entry Body. Optional, value `msg` used by default (like in Pino itself).
-* `resourceAttributes`: Object containing [resource attributes](https://opentelemetry.io/docs/instrumentation/js/resources/).
 
 ## License
 
