@@ -1,10 +1,11 @@
-'use strict'
+import pino from 'pino'
+import { join } from 'path'
+// import type { Options } from 'pino-opentelemetry-transport'
+import type { Options } from '../../'
 
-const pino = require('pino')
-const path = require('path')
-
-const transport = pino.transport({
-  target: path.join(__dirname, '..', '..', 'pino-opentelemetry-transport'),
+const transport = pino.transport<Options>({
+  // target: 'pino-opentelemetry-transport',
+  target: join(__dirname, '..', '..', 'pino-opentelemetry-transport'),
   options: {
     logRecordProcessorOptions: [
       { recordProcessorType: 'batch', exporterOptions: { protocol: 'http' } },

@@ -7,7 +7,11 @@
     "validate-and-test": "standard | snazzy && tap test/*.test.js --branches=45 --lines=45 --functions=45 --statements=45 --coverage-report=lcovonly && tsd",
     "test": "npm run validate-and-test",
     "test-ci": "standard | snazzy && tap test/otlp-logger.test.js --branches=45 --lines=45 --functions=45 --statements=45 --coverage-report=lcovonly && tsd",
-    "docker-run": "docker compose up"
+    "docker-run": "docker compose up",
+    "generate-types": "tsc",
+    "pretest-ci": "npm run generate-types",
+    "pretest": "npm run generate-types",
+    "prepack": "npm run generate-types"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
   "repository": "github:Vunovati/pino-opentelemetry-transport",
@@ -18,9 +22,9 @@
     "@opentelemetry/exporter-logs-otlp-http": "^0.42.0",
     "@opentelemetry/exporter-logs-otlp-proto": "^0.42.0",
     "@opentelemetry/sdk-logs": "^0.42.0",
-    "pino-abstract-transport": "^1.0.0"
+    "pino-abstract-transport": "^1.1.0"
   },
-  "types": "./pino-opentelemetry-transport.d.ts",
+  "types": "./types/pino-opentelemetry-transport.d.ts",
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
     "@opentelemetry/api": "^1.4.1",
@@ -34,7 +38,8 @@
     "standard": "^17.1.0",
     "tap": "^16.0.0",
     "testcontainers": "^10.2.1",
-    "tsd": "^0.28.1"
+    "tsd": "^0.28.1",
+    "typescript": "^5.2.2"
   },
   "standard": {
     "ignore": [
@@ -46,5 +51,9 @@
   },
   "pre-commit": [
     "test"
+  ],
+  "files": [
+    "types",
+    "*.js"
   ]
 }
