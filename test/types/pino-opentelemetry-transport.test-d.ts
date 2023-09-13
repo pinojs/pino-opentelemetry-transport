@@ -3,7 +3,6 @@ import { OnUnknown } from 'pino-abstract-transport'
 import { Transform } from 'stream'
 
 import transport from '../../pino-opentelemetry-transport'
-import { match } from 'assert'
 
 expectType<Promise<Transform & OnUnknown>>(
   transport({

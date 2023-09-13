@@ -1,0 +1,11 @@
+{
+  "include": ["pino-opentelemetry-transport.js"],
+  "compilerOptions": {
+    "skipLibCheck": true,
+    "allowJs": true,
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "outDir": "types/",
+    "declarationMap": true
+  }
+}

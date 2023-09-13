@@ -11,7 +11,7 @@ const createLogProcessor = require('./create-log-processor')
  * @property {string} loggerName
  * @property {string} serviceVersion
  * @property {Object} [resourceAttributes={}]
- * @property {import('./create-log-processor').LogRecordProcessorOptions} [logRecordProcessorOptions]
+ * @property {import('./create-log-processor').LogRecordProcessorOptions | import('./create-log-processor').LogRecordProcessorOptions[]} [logRecordProcessorOptions]
  * @property {string} [messageKey="msg"]
  *
  * @param {Options} opts

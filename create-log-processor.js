@@ -24,7 +24,7 @@ module.exports = function createLogProcessor (logRecordProcessorOptions) {
  * @typedef {Object} LogRecordProcessorOptions
  * @property {RecordProcessorType} recordProcessorType = "batch"
  * @property {ExporterOptions} [exporterOptions]
- * @property {import('@opentelemetry/sdk-logs').BufferConfig} processorConfig
+ * @property {import('@opentelemetry/sdk-logs').BufferConfig} [processorConfig]
  *
  * @param {LogRecordProcessorOptions} [opts]
  * @returns {import('@opentelemetry/sdk-logs').LogRecordProcessor}
@@ -36,7 +36,7 @@ function createLogRecordProcessor (opts) {
     return new SimpleLogRecordProcessor(exporter)
   }
 
-  return new BatchLogRecordProcessor(exporter)
+  return new BatchLogRecordProcessor(exporter, opts?.processorConfig)
 }
 
 /**

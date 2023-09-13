@@ -133,6 +133,7 @@ OTEL_EXPORTER_OTLP_LOGS_PROTOCOL='grpc' OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://
 * [HTTP Server with trace context propagation](./examples/trace-context)
 * [Sending logs to Grafana Loki](./examples/grafana-loki)
 * [Using Multiple Record Processors](./examples/using-multiple-record-processors)
+* [TypeScript](./examples/typescript)
 
 ## Test the repo locally
 
