@@ -1,5 +1,7 @@
 node_modules
 *.log
 *.nyc_output/
+*.d.ts
+*.d.ts.map
 coverage
 package-lock.json
