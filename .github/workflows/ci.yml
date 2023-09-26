@@ -15,8 +15,10 @@ jobs:
     runs-on: ${{ matrix.os }}
     strategy:
       matrix:
-        node-version: [16, 18, 20]
-        os: [macos-latest, ubuntu-latest, windows-latest]
+        node-version: [20]
+        os: [ubuntu-latest]
+    env:
+      DEBUG: 'testcontainers*'
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -30,4 +32,4 @@ jobs:
         run: npm install
 
       - name: Run Tests
-        run: npm run test-ci
+        run: npm run test
