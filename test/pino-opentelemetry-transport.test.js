@@ -1,34 +1,48 @@
 'use strict'
 
-const { readFile } = require('fs/promises')
-const { truncateSync } = require('fs')
 const { join } = require('path')
-const { test, afterEach, before } = require('tap')
+const { test, before } = require('tap')
 const { promisify } = require('util')
 const requireInject = require('require-inject')
-const { DockerComposeEnvironment, Wait } = require('testcontainers')
+const { Wait, GenericContainer } = require('testcontainers')
+const { extract } = require('tar-stream')
+
+const { text } = require('node:stream/consumers')
 
 const sleep = promisify(setTimeout)
 
-const logFile = join('/', 'tmp', 'test-logs', 'otlp-logs.log')
+const LOG_FILE_PATH = '/etc/test-logs/otlp-logs.log'
+
+let container
 
 before(async () => {
-  const composeFilePath = join(__dirname, '..')
-  const composeFile = 'docker-compose.yaml'
-
-  const dockerComposeEnv = new DockerComposeEnvironment(
-    composeFilePath,
-    composeFile
-  ).withWaitStrategy(
-    'otel-collector-1',
-    Wait.forLogMessage('Everything is ready')
+  container = await new GenericContainer(
+    'otel/opentelemetry-collector-contrib:latest'
   )
-
-  await dockerComposeEnv.up()
-})
-
-afterEach(async () => {
-  truncateSync(logFile)
+    .withCopyFilesToContainer([
+      {
+        source: join(__dirname, '..', 'otel-collector-config.yaml'),
+        target: '/etc/otel-collector-config.yaml'
+      }
+    ])
+    .withExposedPorts({
+      container: 4317,
+      host: 4317
+    })
+    .withExposedPorts({
+      container: 4318,
+      host: 4318
+    })
+    .withCommand(['--config=/etc/otel-collector-config.yaml'])
+    .withWaitStrategy(Wait.forLogMessage('Everything is ready'))
+    .withCopyContentToContainer([
+      {
+        content: '',
+        target: LOG_FILE_PATH,
+        mode: parseInt('0777', 8)
+      }
+    ])
+    .start()
 })
 
 const MOCK_HOSTNAME = 'hostname'
@@ -120,12 +134,28 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   await sleep(500)
 
-  const content = await readFile(logFile, 'utf8')
+  const stoppedContainer = await container.stop({
+    remove: false
+  })
 
-  const lines = content
-    .split('\n')
-    .filter(Boolean)
-    .filter(line => line.startsWith('{'))
+  const tarArchiveStream = await stoppedContainer.copyArchiveFromContainer(
+    LOG_FILE_PATH
+  )
+
+  const extractedArchiveStream = extract()
+
+  tarArchiveStream.pipe(extractedArchiveStream)
+
+  const archivedFileContents = []
+
+  for await (const entry of extractedArchiveStream) {
+    const fileContent = await text(entry)
+    archivedFileContents.push(fileContent)
+  }
+
+  const content = archivedFileContents.join('\n')
+
+  const lines = content.split('\n').filter(Boolean)
 
   const expectedLines = [
     {
