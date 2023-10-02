@@ -6,7 +6,7 @@
   "scripts": {
     "validate-and-test": "standard | snazzy && tap test/*.test.js --branches=45 --lines=45 --functions=45 --statements=45 --coverage-report=lcovonly && tsd",
     "test": "npm run validate-and-test",
-    "test-ci": "standard | snazzy && tap test/otlp-logger.test.js --branches=45 --lines=45 --functions=45 --statements=45 --coverage-report=lcovonly && tsd",
+    "test-ci": "DELAY_BETWEEN_LOGS=900 TAP_TIMEOUT=60000 npm test",
     "docker-run": "docker compose up",
     "generate-types": "tsc",
     "pretest-ci": "npm run generate-types",
