@@ -12,6 +12,7 @@ const { text } = require('node:stream/consumers')
 const sleep = promisify(setTimeout)
 
 const LOG_FILE_PATH = '/etc/test-logs/otlp-logs.log'
+const DELAY_BETWEEN_LOGS = Number(process.env.DELAY_BETWEEN_LOGS ?? 500)
 
 let container
 
@@ -80,17 +81,17 @@ test('translate Pino log format to Open Telemetry data format for each log level
   logger.level = 'trace'
 
   logger.trace('test trace')
-  await sleep(500)
+  await sleep(DELAY_BETWEEN_LOGS)
   logger.debug('test debug')
-  await sleep(500)
+  await sleep(DELAY_BETWEEN_LOGS)
   logger.info('test info')
-  await sleep(500)
+  await sleep(DELAY_BETWEEN_LOGS)
   logger.warn('test warn')
-  await sleep(500)
+  await sleep(DELAY_BETWEEN_LOGS)
   logger.error('test error')
-  await sleep(500)
+  await sleep(DELAY_BETWEEN_LOGS)
   logger.fatal('test fatal')
-  await sleep(500)
+  await sleep(DELAY_BETWEEN_LOGS)
 
   const resource = {
     attributes: [
@@ -132,7 +133,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   logger.trace(extra, 'test trace')
 
-  await sleep(500)
+  await sleep(DELAY_BETWEEN_LOGS)
 
   const stoppedContainer = await container.stop({
     remove: false
