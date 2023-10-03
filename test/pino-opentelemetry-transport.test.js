@@ -126,7 +126,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
     version: 'test-service-version'
   }
 
-  await sleep(1000) // wait for logs to be sent to collector
+  await sleep(2000) // wait for logs to be sent to collector
 
   const stoppedContainer = await container.stop({
     remove: false
