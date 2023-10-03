@@ -2,17 +2,13 @@
 
 const { join } = require('path')
 const { test, before } = require('tap')
-const { promisify } = require('util')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
 
 const { text } = require('node:stream/consumers')
 
-const sleep = promisify(setTimeout)
-
 const LOG_FILE_PATH = '/etc/test-logs/otlp-logs.log'
-const DELAY_BETWEEN_LOGS = Number(process.env.DELAY_BETWEEN_LOGS ?? 500)
 
 let container
 
@@ -81,17 +77,11 @@ test('translate Pino log format to Open Telemetry data format for each log level
   logger.level = 'trace'
 
   logger.trace('test trace')
-  await sleep(DELAY_BETWEEN_LOGS)
   logger.debug('test debug')
-  await sleep(DELAY_BETWEEN_LOGS)
   logger.info('test info')
-  await sleep(DELAY_BETWEEN_LOGS)
   logger.warn('test warn')
-  await sleep(DELAY_BETWEEN_LOGS)
   logger.error('test error')
-  await sleep(DELAY_BETWEEN_LOGS)
   logger.fatal('test fatal')
-  await sleep(DELAY_BETWEEN_LOGS)
 
   const resource = {
     attributes: [
@@ -133,13 +123,11 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   logger.trace(extra, 'test trace')
 
-  await sleep(DELAY_BETWEEN_LOGS)
-
-  const stoppedContainer = await container.stop({
+  await container.stop({
     remove: false
   })
 
-  const tarArchiveStream = await stoppedContainer.copyArchiveFromContainer(
+  const tarArchiveStream = await container.copyArchiveFromContainer(
     LOG_FILE_PATH
   )
 
@@ -160,171 +148,82 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   const expectedLines = [
     {
-      resourceLogs: [
-        {
-          resource,
-          scopeLogs: [
-            {
-              scope,
-              logRecords: [
-                {
-                  severityNumber: 1,
-                  severityText: 'TRACE',
-                  body: { stringValue: 'test trace' },
-                  traceId: '',
-                  spanId: ''
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      severityNumber: 1,
+      severityText: 'TRACE',
+      body: { stringValue: 'test trace' },
+      traceId: '',
+      spanId: ''
     },
     {
-      resourceLogs: [
-        {
-          resource,
-          scopeLogs: [
-            {
-              scope,
-              logRecords: [
-                {
-                  severityNumber: 5,
-                  severityText: 'DEBUG',
-                  body: { stringValue: 'test debug' },
-                  traceId: '',
-                  spanId: ''
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      severityNumber: 5,
+      severityText: 'DEBUG',
+      body: { stringValue: 'test debug' },
+      traceId: '',
+      spanId: ''
     },
     {
-      resourceLogs: [
-        {
-          resource,
-          scopeLogs: [
-            {
-              scope,
-              logRecords: [
-                {
-                  severityNumber: 9,
-                  severityText: 'INFO',
-                  body: { stringValue: 'test info' },
-                  traceId: '',
-                  spanId: ''
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      severityNumber: 9,
+      severityText: 'INFO',
+      body: { stringValue: 'test info' },
+      traceId: '',
+      spanId: ''
     },
     {
-      resourceLogs: [
-        {
-          resource,
-          scopeLogs: [
-            {
-              scope,
-              logRecords: [
-                {
-                  severityNumber: 13,
-                  severityText: 'WARN',
-                  body: { stringValue: 'test warn' },
-                  traceId: '',
-                  spanId: ''
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      severityNumber: 13,
+      severityText: 'WARN',
+      body: { stringValue: 'test warn' },
+      traceId: '',
+      spanId: ''
     },
     {
-      resourceLogs: [
-        {
-          resource,
-          scopeLogs: [
-            {
-              scope,
-              logRecords: [
-                {
-                  severityNumber: 17,
-                  severityText: 'ERROR',
-                  body: { stringValue: 'test error' },
-                  traceId: '',
-                  spanId: ''
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      severityNumber: 17,
+      severityText: 'ERROR',
+      body: { stringValue: 'test error' },
+      traceId: '',
+      spanId: ''
     },
     {
-      resourceLogs: [
-        {
-          resource,
-          scopeLogs: [
-            {
-              scope,
-              logRecords: [
-                {
-                  severityNumber: 21,
-                  severityText: 'FATAL',
-                  body: { stringValue: 'test fatal' },
-                  traceId: '',
-                  spanId: ''
-                }
-              ]
-            }
-          ]
-        }
-      ]
+      severityNumber: 21,
+      severityText: 'FATAL',
+      body: { stringValue: 'test fatal' },
+      traceId: '',
+      spanId: ''
     },
     {
-      resourceLogs: [
-        {
-          resource,
-          scopeLogs: [
-            {
-              scope,
-              logRecords: [
-                {
-                  severityNumber: 1,
-                  severityText: 'TRACE',
-                  body: { stringValue: 'test trace' },
-                  traceId: testTraceId,
-                  spanId: testSpanId,
-                  attributes: [
-                    { key: 'foo', value: { stringValue: 'bar' } },
-                    { key: 'baz', value: { stringValue: 'qux' } }
-                  ]
-                }
-              ]
-            }
-          ]
-        }
+      severityNumber: 1,
+      severityText: 'TRACE',
+      body: { stringValue: 'test trace' },
+      traceId: testTraceId,
+      spanId: testSpanId,
+      attributes: [
+        { key: 'foo', value: { stringValue: 'bar' } },
+        { key: 'baz', value: { stringValue: 'qux' } }
       ]
     }
   ]
 
   same(lines.length, expectedLines.length, 'correct number of lines')
 
-  for (const [lineNumber, logLine] of lines.entries()) {
-    hasStrict(
-      JSON.parse(logLine),
-      expectedLines[lineNumber],
-      `line ${lineNumber} severity is mapped correctly`
-    )
-  }
+  lines.forEach(line => {
+    hasStrict(JSON.parse(line).resourceLogs?.[0]?.resource, resource)
+  })
 
-  hasStrict(
-    JSON.parse(lines[lines.length - 1]),
-    expectedLines[expectedLines.length - 1],
-    'extra bindings are stored'
-  )
+  lines.forEach(line => {
+    hasStrict(JSON.parse(line).resourceLogs?.[0]?.scopeLogs?.[0]?.scope, scope)
+  })
+
+  const logRecords = [...lines.entries()]
+    .map(([_lineNumber, logLine]) => {
+      return JSON.parse(logLine).resourceLogs?.[0]?.scopeLogs?.[0]
+        ?.logRecords?.[0]
+    })
+    .sort((a, b) => {
+      return a.timeUnixNano - b.timeUnixNano
+    })
+
+  for (let i = 0; i < logRecords.length; i++) {
+    const logRecord = logRecords[i]
+    const expectedLine = expectedLines[i]
+    hasStrict(logRecord, expectedLine, `line ${i} is mapped correctly`)
+  }
 })
