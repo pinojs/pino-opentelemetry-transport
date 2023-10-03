@@ -123,11 +123,11 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   logger.trace(extra, 'test trace')
 
-  await container.stop({
+  const stoppedContainer = await container.stop({
     remove: false
   })
 
-  const tarArchiveStream = await container.copyArchiveFromContainer(
+  const tarArchiveStream = await stoppedContainer.copyArchiveFromContainer(
     LOG_FILE_PATH
   )
 
