@@ -2,11 +2,13 @@
 
 const { join } = require('path')
 const { test, before } = require('tap')
+const { promisify } = require('util')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
-
 const { text } = require('node:stream/consumers')
+
+const sleep = promisify(setTimeout)
 
 const LOG_FILE_PATH = '/etc/test-logs/otlp-logs.log'
 
@@ -77,6 +79,23 @@ test('translate Pino log format to Open Telemetry data format for each log level
   logger.level = 'trace'
 
   logger.trace('test trace')
+
+  const testTraceId = '12345678901234567890123456789012'
+  const testSpanId = '1234567890123456'
+  const testTraceFlags = '01'
+
+  const extra = {
+    foo: 'bar',
+    baz: 'qux',
+    /* eslint-disable camelcase */
+    trace_id: testTraceId,
+    span_id: testSpanId,
+    trace_flags: testTraceFlags
+    /* eslint-enable camelcase */
+  }
+
+  logger.trace(extra, 'test trace')
+
   logger.debug('test debug')
   logger.info('test info')
   logger.warn('test warn')
@@ -107,21 +126,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
     version: 'test-service-version'
   }
 
-  const testTraceId = '12345678901234567890123456789012'
-  const testSpanId = '1234567890123456'
-  const testTraceFlags = '01'
-
-  const extra = {
-    foo: 'bar',
-    baz: 'qux',
-    /* eslint-disable camelcase */
-    trace_id: testTraceId,
-    span_id: testSpanId,
-    trace_flags: testTraceFlags
-    /* eslint-enable camelcase */
-  }
-
-  logger.trace(extra, 'test trace')
+  await sleep(1000) // wait for logs to be sent to collector
 
   const stoppedContainer = await container.stop({
     remove: false
@@ -153,6 +158,17 @@ test('translate Pino log format to Open Telemetry data format for each log level
       body: { stringValue: 'test trace' },
       traceId: '',
       spanId: ''
+    },
+    {
+      severityNumber: 1,
+      severityText: 'TRACE',
+      body: { stringValue: 'test trace' },
+      traceId: testTraceId,
+      spanId: testSpanId,
+      attributes: [
+        { key: 'foo', value: { stringValue: 'bar' } },
+        { key: 'baz', value: { stringValue: 'qux' } }
+      ]
     },
     {
       severityNumber: 5,
@@ -188,17 +204,6 @@ test('translate Pino log format to Open Telemetry data format for each log level
       body: { stringValue: 'test fatal' },
       traceId: '',
       spanId: ''
-    },
-    {
-      severityNumber: 1,
-      severityText: 'TRACE',
-      body: { stringValue: 'test trace' },
-      traceId: testTraceId,
-      spanId: testSpanId,
-      attributes: [
-        { key: 'foo', value: { stringValue: 'bar' } },
-        { key: 'baz', value: { stringValue: 'qux' } }
-      ]
     }
   ]
 
@@ -218,7 +223,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
         ?.logRecords?.[0]
     })
     .sort((a, b) => {
-      return a.timeUnixNano - b.timeUnixNano
+      return a.severityNumber - b.severityNumber
     })
 
   for (let i = 0; i < logRecords.length; i++) {
