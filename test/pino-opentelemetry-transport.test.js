@@ -181,7 +181,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
     })
     .on('err', line => console.error(line))
 
-  for await (const _startTime of setInterval(0)) { //eslint-disable-line
+  for await (const _ of setInterval(0)) { //eslint-disable-line
     if (logRecordReceivedOnCollectorCount >= expectedLines.length) {
       break
     }
