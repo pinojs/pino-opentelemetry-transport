@@ -10,7 +10,7 @@ exporters:
     flush_interval: 1
 
   logging:
-    verbosity: basic
+    verbosity: detailed
   
 processors:
   batch:

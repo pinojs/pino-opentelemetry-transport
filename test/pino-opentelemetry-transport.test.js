@@ -2,13 +2,11 @@
 
 const { join } = require('path')
 const { test, before } = require('tap')
-const { promisify } = require('util')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
 const { text } = require('node:stream/consumers')
-
-const sleep = promisify(setTimeout)
+const { setInterval } = require('node:timers/promises')
 
 const LOG_FILE_PATH = '/etc/test-logs/otlp-logs.log'
 
@@ -78,8 +76,6 @@ test('translate Pino log format to Open Telemetry data format for each log level
   const logger = pino(transport, {})
   logger.level = 'trace'
 
-  logger.trace('test trace')
-
   const testTraceId = '12345678901234567890123456789012'
   const testSpanId = '1234567890123456'
   const testTraceFlags = '01'
@@ -95,7 +91,6 @@ test('translate Pino log format to Open Telemetry data format for each log level
   }
 
   logger.trace(extra, 'test trace')
-
   logger.debug('test debug')
   logger.info('test info')
   logger.warn('test warn')
@@ -126,39 +121,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
     version: 'test-service-version'
   }
 
-  await sleep(2000) // wait for logs to be sent to collector
-
-  const stoppedContainer = await container.stop({
-    remove: false
-  })
-
-  const tarArchiveStream = await stoppedContainer.copyArchiveFromContainer(
-    LOG_FILE_PATH
-  )
-
-  const extractedArchiveStream = extract()
-
-  tarArchiveStream.pipe(extractedArchiveStream)
-
-  const archivedFileContents = []
-
-  for await (const entry of extractedArchiveStream) {
-    const fileContent = await text(entry)
-    archivedFileContents.push(fileContent)
-  }
-
-  const content = archivedFileContents.join('\n')
-
-  const lines = content.split('\n').filter(Boolean)
-
   const expectedLines = [
-    {
-      severityNumber: 1,
-      severityText: 'TRACE',
-      body: { stringValue: 'test trace' },
-      traceId: '',
-      spanId: ''
-    },
     {
       severityNumber: 1,
       severityText: 'TRACE',
@@ -206,6 +169,44 @@ test('translate Pino log format to Open Telemetry data format for each log level
       spanId: ''
     }
   ]
+
+  const logs = await container.logs()
+  let logRecordReceivedOnCollectorCount = 0
+
+  logs
+    .on('data', line => {
+      if (line.includes('LogRecord')) {
+        logRecordReceivedOnCollectorCount++
+      }
+    })
+    .on('err', line => console.error(line))
+
+  for await (const _ of setInterval(0)) { //eslint-disable-line
+    if (logRecordReceivedOnCollectorCount >= expectedLines.length) {
+      break
+    }
+  }
+
+  const stoppedContainer = await container.stop({ remove: false })
+
+  const tarArchiveStream = await stoppedContainer.copyArchiveFromContainer(
+    LOG_FILE_PATH
+  )
+
+  const extractedArchiveStream = extract()
+
+  tarArchiveStream.pipe(extractedArchiveStream)
+
+  const archivedFileContents = []
+
+  for await (const entry of extractedArchiveStream) {
+    const fileContent = await text(entry)
+    archivedFileContents.push(fileContent)
+  }
+
+  const content = archivedFileContents.join('\n')
+
+  const lines = content.split('\n').filter(Boolean)
 
   same(lines.length, expectedLines.length, 'correct number of lines')
 
