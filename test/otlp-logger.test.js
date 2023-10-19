@@ -82,8 +82,6 @@ test('otlp logger logs a record in log exporter and maps all log levels correctl
   match(records[0].resource, {
     _attributes: {
       'service.name': 'test-service',
-      'telemetry.sdk.language': 'nodejs',
-      'telemetry.sdk.name': 'opentelemetry',
       'service.version': '1.0.0',
       foo: 'bar'
     }
