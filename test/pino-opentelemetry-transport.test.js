@@ -97,24 +97,20 @@ test('translate Pino log format to Open Telemetry data format for each log level
   logger.error('test error')
   logger.fatal('test fatal')
 
-  const resource = {
-    attributes: [
-      {
-        key: 'service.name',
-        value: {
-          stringValue: 'test-service'
-        }
-      },
-      {
-        key: 'telemetry.sdk.language',
-        value: { stringValue: 'nodejs' }
-      },
-      {
-        key: 'telemetry.sdk.name',
-        value: { stringValue: 'opentelemetry' }
+  const expectedResourceAttributes = [
+    {
+      key: 'service.name',
+      value: {
+        stringValue: 'test-service'
       }
-    ]
-  }
+    },
+    {
+      key: 'service.version',
+      value: {
+        stringValue: 'test-service-version'
+      }
+    }
+  ]
 
   const scope = {
     name: 'test-logger-name',
@@ -181,7 +177,8 @@ test('translate Pino log format to Open Telemetry data format for each log level
     })
     .on('err', line => console.error(line))
 
-  for await (const _ of setInterval(0)) { //eslint-disable-line
+  // eslint-disable-next-line
+  for await (const _ of setInterval(0)) {
     if (logRecordReceivedOnCollectorCount >= expectedLines.length) {
       break
     }
@@ -211,7 +208,13 @@ test('translate Pino log format to Open Telemetry data format for each log level
   same(lines.length, expectedLines.length, 'correct number of lines')
 
   lines.forEach(line => {
-    hasStrict(JSON.parse(line).resourceLogs?.[0]?.resource, resource)
+    const foundAttributes = JSON.parse(
+      line
+    ).resourceLogs?.[0]?.resource.attributes.filter(
+      attribute =>
+        attribute.key === 'service.name' || attribute.key === 'service.version'
+    )
+    hasStrict(foundAttributes, expectedResourceAttributes)
   })
 
   lines.forEach(line => {

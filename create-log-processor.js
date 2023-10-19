@@ -84,15 +84,7 @@ function createExporter (exporterOptions) {
     return new ConsoleLogRecordExporter()
   }
 
-  const {
-    OTLPLogsExporter,
-    OTLPLogExporter
-  } = require('@opentelemetry/exporter-logs-otlp-proto')
+  const { OTLPLogExporter } = require('@opentelemetry/exporter-logs-otlp-proto')
 
-  if (typeof OTLPLogExporter === 'function') {
-    return new OTLPLogExporter(exporterOptions?.protobufExporterOptions)
-  }
-
-  // TODO: remove this once https://github.com/open-telemetry/opentelemetry-js/issues/3812#issuecomment-1713830883 is resolved
-  return new OTLPLogsExporter(exporterOptions?.protobufExporterOptions)
+  return new OTLPLogExporter(exporterOptions?.protobufExporterOptions)
 }

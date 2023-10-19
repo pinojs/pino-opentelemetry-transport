@@ -15,25 +15,6 @@ const {
 
 const DEFAULT_MESSAGE_KEY = 'msg'
 
-// TODO: BatchLogRecordProcessor should be configurable with https://opentelemetry.io/docs/specs/otel/configuration/sdk-environment-variables/#batch-logrecord-processor
-// which implements this spec https://opentelemetry.io/docs/specs/otel/logs/sdk/#batching-processor
-// and is implemented here https://github.com/open-telemetry/opentelemetry-js/blob/48fb15862e801b742059a3e39dbcc8ef4c10b2e2/experimental/packages/sdk-logs/src/export/BatchLogRecordProcessorBase.ts#L47C1-L47C1
-//
-//
-// TODO: document the ability for user to provide one's own LogRecorProcesor https://opentelemetry.io/docs/specs/otel/logs/sdk/#logrecordprocessor
-//
-// TODO: document thow the user can create a MultiLogProcessor if they need to use multiple exporters https://github.com/open-telemetry/opentelemetry-js/blob/main/experimental/packages/sdk-logs/src/MultiLogRecordProcessor.ts
-// TODO: use MultiLogRecordProcessor to support multiple exporters as an implementation detail as the sdk does not export that
-//
-//
-// All env vars are defined here: https://github.com/open-telemetry/opentelemetry-js/blob/main/packages/opentelemetry-core/src/utils/environment.ts#L135
-// We might want to read this env var https://github.com/open-telemetry/opentelemetry-js/blob/main/packages/opentelemetry-core/src/utils/environment.ts#L138
-// order: OTEL_EXPORTER_OTLP_LOGS_PROTOCOL ?? OTEL_EXPORTER_OTLP_PROTOCOL ?? options.exporterProtocol
-//
-//
-// TODO: add this chunk to REAMDE "Settings configured programmatically take precedence over environment variables. Per-signal environment variables take precedence over non-per-signal environment variables."
-//
-
 /**
  * @typedef {Object} Options
  * @property {string} loggerName
