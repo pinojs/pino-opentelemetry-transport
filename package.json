@@ -37,7 +37,7 @@
     "require-inject": "^1.4.4",
     "snazzy": "^9.0.0",
     "standard": "^17.1.0",
-    "tap": "^16.3.8",
+    "tap": "^18.5.7",
     "tar-stream": "^3.1.6",
     "testcontainers": "^10.2.1",
     "tsd": "^0.28.1",
