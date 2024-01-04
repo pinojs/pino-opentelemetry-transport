@@ -12,7 +12,6 @@ class MultiLogRecordProcessor {
   constructor (processors, forceFlushTimeoutMillis) {
     this.processors = processors
     this.forceFlushTimeoutMillis = forceFlushTimeoutMillis
-    console.log('MultiLogRecordProcessor', processors)
   }
 
   async forceFlush () {
