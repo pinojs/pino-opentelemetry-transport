@@ -1,7 +1,7 @@
 'use strict'
 
 // test otlp logger with all possible options
-const { toOpenTelemetry } = require('../opentelemetry-mapper')
+const { toOpenTelemetry } = require('../../lib/opentelemetry-mapper')
 const { test } = require('tap')
 
 test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {

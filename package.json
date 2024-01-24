@@ -2,9 +2,9 @@
   "name": "pino-opentelemetry-transport",
   "version": "0.4.1",
   "description": "OpenTelemetry transport for Pino",
-  "main": "pino-opentelemetry-transport.js",
+  "main": "lib/pino-opentelemetry-transport.js",
   "scripts": {
-    "validate-and-test": "standard | snazzy && tap test/*.test.js --branches=45 --lines=45 --functions=45 --statements=45 --coverage-report=lcovonly && tsd",
+    "validate-and-test": "standard | snazzy && tap test/**/*.test.js --branches=45 --lines=45 --functions=45 --statements=45 --coverage-report=lcovonly && tsd",
     "test": "npm run validate-and-test",
     "docker-run": "docker compose up",
     "generate-types": "tsc",
