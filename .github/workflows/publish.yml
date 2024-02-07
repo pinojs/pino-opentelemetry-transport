@@ -1,0 +1,37 @@
+name: publish-on-release-pr-merge
+
+on:
+  pull_request:
+    types: [closed]
+
+jobs:
+  publish-npm:
+    if: github.event.pull_request.merged == true && github.event.pull_request.user.login == 'github-actions[bot]' && contains(github.event.pull_request.head.ref, 'release-please')
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - name: Wait for release-please workflow to complete
+        run: |
+          merged_at=$(date -d"${{ github.event.pull_request.merged_at }}" +%s)
+          while : ; do
+            status=$(curl -s -H "Authorization: token ${{ secrets.GITHUB_TOKEN }}" \
+              https://api.github.com/repos/${{ github.repository }}/actions/runs | \
+              jq -r --arg merged_at "$merged_at" \
+              '.workflow_runs[] | select(.name=="release-please" and (.created_at | sub("\\.[0-9]+Z$"; "Z") | fromdate | . > ($merged_at | tonumber))) | .status' | head -1)
+            if [ "$status" = "completed" ]; then
+              break
+            fi
+            echo "Waiting for release-please workflow to complete"
+            sleep 20
+          done
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org/
+      - run: npm install
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
