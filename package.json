@@ -17,7 +17,7 @@
   "license": "MIT",
   "dependencies": {
     "@opentelemetry/api-logs": "^0.47.0",
-    "otlp-logger": "file:../../../GitHub/otlp-logger",
+    "otlp-logger": "^1.1.0",
     "pino-abstract-transport": "^1.1.0"
   },
   "types": "./types/pino-opentelemetry-transport.d.ts",
