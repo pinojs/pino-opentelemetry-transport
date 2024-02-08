@@ -1,5 +1,5 @@
 {
-  "include": ["pino-opentelemetry-transport.js"],
+  "include": ["lib/pino-opentelemetry-transport.js"],
   "compilerOptions": {
     "skipLibCheck": true,
     "allowJs": true,

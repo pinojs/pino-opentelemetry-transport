@@ -18,7 +18,7 @@ before(async () => {
   )
     .withCopyFilesToContainer([
       {
-        source: join(__dirname, '..', 'otel-collector-config.yaml'),
+        source: join(__dirname, '..', '..', 'otel-collector-config.yaml'),
         target: '/etc/otel-collector-config.yaml'
       }
     ])
@@ -56,7 +56,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   const transport = pino.transport({
     level: 'trace',
-    target: '..',
+    target: '../..',
     options: {
       loggerName: 'test-logger-name',
       resourceAttributes: {
