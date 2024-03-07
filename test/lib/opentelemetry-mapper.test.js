@@ -1,8 +1,22 @@
 'use strict'
 
 // test otlp logger with all possible options
-const { toOpenTelemetry } = require('../../lib/opentelemetry-mapper')
+const { toOpenTelemetry, DEFAULT_SEVERITY_NUMBER_MAP } = require('../../lib/opentelemetry-mapper')
 const { test } = require('tap')
+const { SeverityNumber } = require('@opentelemetry/api-logs')
+const pino = require('pino')
+
+test('default severity number map', async ({ match }) => {
+  const pinoLogLevels = pino.levels.values
+  match(DEFAULT_SEVERITY_NUMBER_MAP, {
+    [pinoLogLevels.trace]: SeverityNumber.TRACE,
+    [pinoLogLevels.debug]: SeverityNumber.DEBUG,
+    [pinoLogLevels.info]: SeverityNumber.INFO,
+    [pinoLogLevels.warn]: SeverityNumber.WARN,
+    [pinoLogLevels.error]: SeverityNumber.ERROR,
+    [pinoLogLevels.fatal]: SeverityNumber.FATAL
+  })
+})
 
 test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
   const testStart = Date.now()
