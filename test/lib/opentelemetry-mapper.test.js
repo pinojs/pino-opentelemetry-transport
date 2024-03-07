@@ -104,7 +104,12 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
         ...testLogEntryBase,
         level: 60
       },
-      { messageKey: 'msg' }
+      {
+        messageKey: 'msg',
+        severityNumberMap: {
+          35: 10
+        }
+      }
     ),
     {
       severityNumber: 21,
@@ -116,9 +121,33 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
     toOpenTelemetry(
       {
         ...testLogEntryBase,
+        level: 35
+      },
+      {
+        messageKey: 'msg',
+        severityNumberMap: {
+          35: 10
+        }
+      }
+    ),
+    {
+      severityNumber: 10,
+      severityText: 'INFO2'
+    }
+  )
+
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
         level: 42
       },
-      { messageKey: 'msg' }
+      {
+        messageKey: 'msg',
+        severityNumberMap: {
+          35: 10
+        }
+      }
     ),
     {
       severityNumber: 0,

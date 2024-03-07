@@ -55,7 +55,6 @@ test('translate Pino log format to Open Telemetry data format for each log level
   })
 
   const transport = pino.transport({
-    level: 'trace',
     target: '../..',
     options: {
       loggerName: 'test-logger-name',
@@ -69,12 +68,19 @@ test('translate Pino log format to Open Telemetry data format for each log level
         exporterOptions: {
           protocol: 'grpc'
         }
+      },
+      severityNumberMap: {
+        35: 10
       }
     }
   })
 
-  const logger = pino(transport, {})
-  logger.level = 'trace'
+  const logger = pino({
+    level: 'trace',
+    customLevels: {
+      custom: 35
+    }
+  }, transport)
 
   const testTraceId = '12345678901234567890123456789012'
   const testSpanId = '1234567890123456'
@@ -93,6 +99,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
   logger.trace(extra, 'test trace')
   logger.debug('test debug')
   logger.info('test info')
+  logger.custom('test custom')
   logger.warn('test warn')
   logger.error('test error')
   logger.fatal('test fatal')
@@ -140,6 +147,13 @@ test('translate Pino log format to Open Telemetry data format for each log level
       severityNumber: 9,
       severityText: 'INFO',
       body: { stringValue: 'test info' },
+      traceId: '',
+      spanId: ''
+    },
+    {
+      severityNumber: 10,
+      severityText: 'INFO2',
+      body: { stringValue: 'test custom' },
       traceId: '',
       spanId: ''
     },
