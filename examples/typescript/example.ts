@@ -5,7 +5,7 @@ import type { Options } from '../../'
 
 const transport = pino.transport<Options>({
   // target: 'pino-opentelemetry-transport',
-  target: join(__dirname, '..', '..', 'pino-opentelemetry-transport'),
+  target: join(__dirname, '..', '..', 'lib', 'pino-opentelemetry-transport'),
   options: {
     logRecordProcessorOptions: [
       { recordProcessorType: 'batch', exporterOptions: { protocol: 'http' } },
