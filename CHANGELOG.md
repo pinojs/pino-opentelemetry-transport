@@ -1,5 +1,17 @@
 # Changelog
 
+## [0.6.0](https://github.com/Vunovati/pino-opentelemetry-transport/compare/v0.5.0...v0.6.0) (2024-03-08)
+
+
+### Features
+
+* support for custom log levels ([#146](https://github.com/Vunovati/pino-opentelemetry-transport/issues/146)) ([d3e0c82](https://github.com/Vunovati/pino-opentelemetry-transport/commit/d3e0c82c2810ed1cd48bd892d54d1627fc92f2b6))
+
+
+### Bug Fixes
+
+* **deps:** bump actions/setup-node from 3 to 4 ([#133](https://github.com/Vunovati/pino-opentelemetry-transport/issues/133)) ([c3735e7](https://github.com/Vunovati/pino-opentelemetry-transport/commit/c3735e7ebd38c5d1893238e893490d4b353d5662))
+
 ## [0.5.0](https://github.com/Vunovati/pino-opentelemetry-transport/compare/v0.4.1...v0.5.0) (2024-02-09)
 
 

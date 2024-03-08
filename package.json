@@ -1,6 +1,6 @@
 {
   "name": "pino-opentelemetry-transport",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "description": "OpenTelemetry transport for Pino",
   "main": "lib/pino-opentelemetry-transport.js",
   "scripts": {
