@@ -3,7 +3,7 @@ const http = require('http')
 const pino = require('pino')
 const path = require('path')
 const transport = pino.transport({
-  target: path.join(__dirname, '..', '..', 'pino-opentelemetry-transport')
+  target: path.join(__dirname, '..', '..', 'lib', 'pino-opentelemetry-transport')
 })
 
 const logger = pino(transport)

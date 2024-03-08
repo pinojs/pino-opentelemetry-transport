@@ -4,7 +4,7 @@ const pino = require('pino')
 const path = require('path')
 
 const transport = pino.transport({
-  target: path.join(__dirname, '..', '..', 'pino-opentelemetry-transport'),
+  target: path.join(__dirname, '..', '..', 'lib', 'pino-opentelemetry-transport'),
   options: {
     logRecordProcessorOptions: [
       { recordProcessorType: 'batch', exporterOptions: { protocol: 'http' } },
