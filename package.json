@@ -13,7 +13,7 @@
     "prepack": "npm run generate-types"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
-  "repository": "github:Vunovati/pino-opentelemetry-transport",
+  "repository": "github:pinojs/pino-opentelemetry-transport",
   "license": "MIT",
   "dependencies": {
     "otlp-logger": "^1.1.0",
