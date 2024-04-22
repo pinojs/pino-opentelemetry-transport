@@ -158,6 +158,11 @@ Observe the logs
 
 Note that not all log entries will immediately be written to the `otlp-logs.log` file. The collector will flush to the disk eventually. The flush will be forced if the collector receives a kill signal.
 
+## Acknowledgements
+
+This project is kindly sponsored by:
+- [NearForm](https://nearform.com)
+
 ## License
 
 MIT
