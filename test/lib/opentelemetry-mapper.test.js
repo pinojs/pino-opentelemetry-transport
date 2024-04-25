@@ -6,9 +6,10 @@ const { test } = require('tap')
 const { SeverityNumber } = require('@opentelemetry/api-logs')
 const pino = require('pino')
 
-test('default severity number map', async ({ match }) => {
-  const pinoLogLevels = pino.levels.values
-  match(DEFAULT_SEVERITY_NUMBER_MAP, {
+const pinoLogLevels = pino.levels.values
+
+test('default severity number map', async ({ same }) => {
+  same(DEFAULT_SEVERITY_NUMBER_MAP, {
     [pinoLogLevels.trace]: SeverityNumber.TRACE,
     [pinoLogLevels.debug]: SeverityNumber.DEBUG,
     [pinoLogLevels.info]: SeverityNumber.INFO,
@@ -18,7 +19,8 @@ test('default severity number map', async ({ match }) => {
   })
 })
 
-test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
+test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) => {
+  const mapperOptions = { messageKey: 'msg', levels: pino.levels }
   const testStart = Date.now()
   const testLogEntryBase = {
     msg: 'test message',
@@ -31,21 +33,22 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
   const testSpanId = '1234567890123456'
   const testTraceFlags = '01'
 
-  match(
+  same(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
-        level: 10,
+        level: pinoLogLevels.trace,
         trace_id: testTraceId,
         span_id: testSpanId,
         trace_flags: testTraceFlags,
         testAttribute: 'test'
       },
-      { messageKey: 'msg' }
+      mapperOptions
     ),
     {
-      severityNumber: 1,
-      severityText: 'TRACE',
+      severityNumber: SeverityNumber.TRACE,
+      severityText: 'trace',
+      timestamp: testStart,
       body: 'test message',
       attributes: {
         testAttribute: 'test',
@@ -60,13 +63,13 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
     toOpenTelemetry(
       {
         ...testLogEntryBase,
-        level: 20
+        level: pinoLogLevels.debug
       },
-      { messageKey: 'msg' }
+      mapperOptions
     ),
     {
-      severityNumber: 5,
-      severityText: 'DEBUG'
+      severityNumber: SeverityNumber.DEBUG,
+      severityText: 'debug'
     }
   )
 
@@ -74,13 +77,13 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
     toOpenTelemetry(
       {
         ...testLogEntryBase,
-        level: 30
+        level: pinoLogLevels.info
       },
-      { messageKey: 'msg' }
+      mapperOptions
     ),
     {
-      severityNumber: 9,
-      severityText: 'INFO'
+      severityNumber: SeverityNumber.INFO,
+      severityText: 'info'
     }
   )
 
@@ -88,13 +91,13 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
     toOpenTelemetry(
       {
         ...testLogEntryBase,
-        level: 40
+        level: pinoLogLevels.warn
       },
-      { messageKey: 'msg' }
+      mapperOptions
     ),
     {
-      severityNumber: 13,
-      severityText: 'WARN'
+      severityNumber: SeverityNumber.WARN,
+      severityText: 'warn'
     }
   )
 
@@ -102,13 +105,13 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
     toOpenTelemetry(
       {
         ...testLogEntryBase,
-        level: 50
+        level: pinoLogLevels.error
       },
-      { messageKey: 'msg' }
+      mapperOptions
     ),
     {
-      severityNumber: 17,
-      severityText: 'ERROR'
+      severityNumber: SeverityNumber.ERROR,
+      severityText: 'error'
     }
   )
 
@@ -116,19 +119,40 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
     toOpenTelemetry(
       {
         ...testLogEntryBase,
-        level: 60
+        level: pinoLogLevels.fatal
       },
       {
-        messageKey: 'msg',
+        ...mapperOptions,
         severityNumberMap: {
-          35: 10
+          35: SeverityNumber.INFO2
         }
       }
     ),
     {
-      severityNumber: 21,
-      severityText: 'FATAL'
-    }
+      severityNumber: SeverityNumber.FATAL,
+      severityText: 'fatal'
+    },
+    'use default severity numbers when level does not exist in severityNumberMap'
+  )
+
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
+        level: pinoLogLevels.info
+      },
+      {
+        ...mapperOptions,
+        severityNumberMap: {
+          [pinoLogLevels.info]: SeverityNumber.INFO3
+        }
+      }
+    ),
+    {
+      severityNumber: SeverityNumber.INFO3,
+      severityText: 'info'
+    },
+    'use configured severity numbers for built-in levels'
   )
 
   match(
@@ -138,34 +162,43 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match }) => {
         level: 35
       },
       {
-        messageKey: 'msg',
+        ...mapperOptions,
+        levels: {
+          labels: {
+            35: 'custom'
+          }
+        },
         severityNumberMap: {
-          35: 10
+          35: SeverityNumber.INFO2
         }
       }
     ),
     {
-      severityNumber: 10,
-      severityText: 'INFO2'
-    }
+      severityNumber: SeverityNumber.INFO2,
+      severityText: 'custom'
+    },
+    'use configured severity numbers for custom levels'
   )
 
   match(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
-        level: 42
+        level: 35
       },
       {
-        messageKey: 'msg',
-        severityNumberMap: {
-          35: 10
+        ...mapperOptions,
+        levels: {
+          labels: {
+            35: 'custom'
+          }
         }
       }
     ),
     {
-      severityNumber: 0,
-      severityText: 'UNSPECIFIED'
-    }
+      severityNumber: SeverityNumber.UNSPECIFIED,
+      severityText: 'custom'
+    },
+    'use UNSPECIFIED severity number when there is no match for the level'
   )
 })

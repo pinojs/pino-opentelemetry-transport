@@ -5,6 +5,7 @@ const { test, before } = require('tap')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
+const { SeverityNumber } = require('@opentelemetry/api-logs')
 const { text } = require('node:stream/consumers')
 const { setInterval } = require('node:timers/promises')
 
@@ -70,7 +71,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
         }
       },
       severityNumberMap: {
-        35: 10
+        35: SeverityNumber.INFO2
       }
     }
   })
@@ -126,8 +127,8 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   const expectedLines = [
     {
-      severityNumber: 1,
-      severityText: 'TRACE',
+      severityNumber: SeverityNumber.TRACE,
+      severityText: 'trace',
       body: { stringValue: 'test trace' },
       traceId: testTraceId,
       spanId: testSpanId,
@@ -137,43 +138,43 @@ test('translate Pino log format to Open Telemetry data format for each log level
       ]
     },
     {
-      severityNumber: 5,
-      severityText: 'DEBUG',
+      severityNumber: SeverityNumber.DEBUG,
+      severityText: 'debug',
       body: { stringValue: 'test debug' },
       traceId: '',
       spanId: ''
     },
     {
-      severityNumber: 9,
-      severityText: 'INFO',
+      severityNumber: SeverityNumber.INFO,
+      severityText: 'info',
       body: { stringValue: 'test info' },
       traceId: '',
       spanId: ''
     },
     {
-      severityNumber: 10,
-      severityText: 'INFO2',
+      severityNumber: SeverityNumber.INFO2,
+      severityText: 'custom',
       body: { stringValue: 'test custom' },
       traceId: '',
       spanId: ''
     },
     {
-      severityNumber: 13,
-      severityText: 'WARN',
+      severityNumber: SeverityNumber.WARN,
+      severityText: 'warn',
       body: { stringValue: 'test warn' },
       traceId: '',
       spanId: ''
     },
     {
-      severityNumber: 17,
-      severityText: 'ERROR',
+      severityNumber: SeverityNumber.ERROR,
+      severityText: 'error',
       body: { stringValue: 'test error' },
       traceId: '',
       spanId: ''
     },
     {
-      severityNumber: 21,
-      severityText: 'FATAL',
+      severityNumber: SeverityNumber.FATAL,
+      severityText: 'fatal',
       body: { stringValue: 'test fatal' },
       traceId: '',
       spanId: ''
