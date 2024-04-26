@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.0.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v0.6.0...v1.0.0) (2024-04-26)
+
+
+### ⚠ BREAKING CHANGES
+
+* 
+
+### Features
+
+* use config sent by pino to support custom message key and log levels ([#165](https://github.com/pinojs/pino-opentelemetry-transport/issues/165)) ([2bf9bc8](https://github.com/pinojs/pino-opentelemetry-transport/commit/2bf9bc879bb0ff6e902b04ebbc89612d755ce927))
+
 ## [0.6.0](https://github.com/Vunovati/pino-opentelemetry-transport/compare/v0.5.0...v0.6.0) (2024-03-08)
 
 
