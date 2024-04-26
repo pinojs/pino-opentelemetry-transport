@@ -4,7 +4,7 @@
   "description": "OpenTelemetry transport for Pino",
   "main": "lib/pino-opentelemetry-transport.js",
   "scripts": {
-    "validate-and-test": "standard | snazzy && tap test/**/*.test.js --branches=45 --lines=45 --functions=45 --statements=45 --coverage-report=lcovonly && tsd",
+    "validate-and-test": "standard | snazzy && tap && tsd",
     "test": "npm run validate-and-test",
     "docker-run": "docker compose up",
     "generate-types": "tsc",
@@ -16,10 +16,13 @@
   "repository": "github:pinojs/pino-opentelemetry-transport",
   "license": "MIT",
   "dependencies": {
-    "otlp-logger": "^1.1.0",
-    "pino-abstract-transport": "^1.1.0"
+    "otlp-logger": "^1.1.4",
+    "pino-abstract-transport": "^1.2.0"
   },
   "types": "./types/pino-opentelemetry-transport.d.ts",
+  "peerDependencies": {
+    "pino": "^8.21.0 || ^9.0.0"
+  },
   "devDependencies": {
     "@commitlint/cli": "^19.0.3",
     "@commitlint/config-conventional": "^19.0.3",
@@ -27,7 +30,7 @@
     "@opentelemetry/api": "^1.4.1",
     "@opentelemetry/api-logs": "^0.51.0",
     "@opentelemetry/instrumentation-http": "^0.51.0",
-    "@opentelemetry/instrumentation-pino": "^0.37.0",
+    "@opentelemetry/instrumentation-pino": "^0.38.0",
     "@opentelemetry/sdk-node": "^0.51.0",
     "@types/node": "^20.8.2",
     "pino": "^9.0.0",
