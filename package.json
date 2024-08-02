@@ -32,7 +32,7 @@
     "@opentelemetry/instrumentation-http": "^0.52.1",
     "@opentelemetry/instrumentation-pino": "^0.41.0",
     "@opentelemetry/sdk-node": "^0.52.1",
-    "@types/node": "^20.8.2",
+    "@types/node": "^22.1.0",
     "pino": "^9.0.0",
     "require-inject": "^1.4.4",
     "snazzy": "^9.0.0",
