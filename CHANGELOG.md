@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.0.1](https://github.com/pinojs/pino-opentelemetry-transport/compare/v1.0.0...v1.0.1) (2024-09-10)
+
+
+### Bug Fixes
+
+* **deps:** bump pino-abstract-transport ([#185](https://github.com/pinojs/pino-opentelemetry-transport/issues/185)) ([d11a46e](https://github.com/pinojs/pino-opentelemetry-transport/commit/d11a46e57bfdb953405f399b9c3bd5c6afa01a7c))
+
 ## [1.0.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v0.6.0...v1.0.0) (2024-04-26)
 
 
