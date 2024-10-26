@@ -15,7 +15,7 @@ let container
 
 before(async () => {
   container = await new GenericContainer(
-    'otel/opentelemetry-collector-contrib:0.103.1'
+    'otel/opentelemetry-collector-contrib:0.112.0'
   )
     .withCopyFilesToContainer([
       {
