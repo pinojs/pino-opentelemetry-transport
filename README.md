@@ -75,13 +75,16 @@ receivers:
   otlp:
     protocols:
       grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
 
 exporters:
   file:
     path: ./etc/test-logs/otlp-logs.log
     flush_interval: 1
 
-  logging:
+  debug:
     verbosity: basic
   
 processors:
@@ -92,7 +95,7 @@ service:
     logs:
       receivers: [otlp]
       processors: []
-      exporters: [logging, file]
+      exporters: [debug, file]
 ```
 
 The collector can then be ran with:
