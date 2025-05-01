@@ -2,14 +2,14 @@
 
 // test otlp logger with all possible options
 const { toOpenTelemetry, DEFAULT_SEVERITY_NUMBER_MAP } = require('../../lib/opentelemetry-mapper')
-const { test } = require('tap')
+const { test } = require('node:test')
 const { SeverityNumber } = require('@opentelemetry/api-logs')
 const pino = require('pino')
 
 const pinoLogLevels = pino.levels.values
 
-test('default severity number map', async ({ same }) => {
-  same(DEFAULT_SEVERITY_NUMBER_MAP, {
+test('default severity number map', async (t) => {
+  t.assert.deepStrictEqual(DEFAULT_SEVERITY_NUMBER_MAP, {
     [pinoLogLevels.trace]: SeverityNumber.TRACE,
     [pinoLogLevels.debug]: SeverityNumber.DEBUG,
     [pinoLogLevels.info]: SeverityNumber.INFO,
@@ -19,7 +19,7 @@ test('default severity number map', async ({ same }) => {
   })
 })
 
-test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) => {
+test('toOpenTelemetry maps all log levels correctly', async (t) => {
   const mapperOptions = { messageKey: 'msg', levels: pino.levels }
   const testStart = Date.now()
   const testLogEntryBase = {
@@ -33,7 +33,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
   const testSpanId = '1234567890123456'
   const testTraceFlags = '01'
 
-  same(
+  t.assert.deepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
@@ -59,7 +59,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
     }
   )
 
-  match(
+  t.assert.partialDeepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
@@ -73,7 +73,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
     }
   )
 
-  match(
+  t.assert.partialDeepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
@@ -87,7 +87,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
     }
   )
 
-  match(
+  t.assert.partialDeepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
@@ -101,7 +101,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
     }
   )
 
-  match(
+  t.assert.partialDeepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
@@ -115,7 +115,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
     }
   )
 
-  match(
+  t.assert.partialDeepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
@@ -135,7 +135,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
     'use default severity numbers when level does not exist in severityNumberMap'
   )
 
-  match(
+  t.assert.partialDeepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
@@ -155,7 +155,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
     'use configured severity numbers for built-in levels'
   )
 
-  match(
+  t.assert.partialDeepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
@@ -180,7 +180,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
     'use configured severity numbers for custom levels'
   )
 
-  match(
+  t.assert.partialDeepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,

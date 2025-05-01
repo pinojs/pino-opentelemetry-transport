@@ -4,7 +4,7 @@
   "description": "OpenTelemetry transport for Pino",
   "main": "lib/pino-opentelemetry-transport.js",
   "scripts": {
-    "validate-and-test": "standard | snazzy && tap && tsd",
+    "validate-and-test": "standard | snazzy && node --test ./test/lib/*.test.js && tsd",
     "test": "npm run validate-and-test",
     "docker-run": "docker compose up",
     "generate-types": "tsc",
@@ -37,7 +37,6 @@
     "require-inject": "^1.4.4",
     "snazzy": "^9.0.0",
     "standard": "^17.1.0",
-    "tap": "^16.3.8",
     "tar-stream": "^3.1.6",
     "testcontainers": "^10.2.1",
     "tsd": "^0.32.0",

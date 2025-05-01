@@ -1,7 +1,7 @@
 'use strict'
 
 const { join } = require('path')
-const { test, before } = require('tap')
+const { it, before } = require('node:test')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
@@ -45,10 +45,7 @@ before(async () => {
 
 const MOCK_HOSTNAME = 'hostname'
 
-test('translate Pino log format to Open Telemetry data format for each log level', async ({
-  same,
-  hasStrict
-}) => {
+it('translate Pino log format to Open Telemetry data format for each log level', async (t) => {
   const pino = requireInject.withEmptyCache('pino', {
     os: {
       hostname: () => MOCK_HOSTNAME
@@ -220,7 +217,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   const lines = content.split('\n').filter(Boolean)
 
-  same(lines.length, expectedLines.length, 'correct number of lines')
+  t.assert.strictEqual(lines.length, expectedLines.length, 'correct number of lines')
 
   lines.forEach(line => {
     const foundAttributes = JSON.parse(
@@ -229,11 +226,11 @@ test('translate Pino log format to Open Telemetry data format for each log level
       attribute =>
         attribute.key === 'service.name' || attribute.key === 'service.version'
     )
-    hasStrict(foundAttributes, expectedResourceAttributes)
+    t.assert.deepStrictEqual(foundAttributes, expectedResourceAttributes)
   })
 
   lines.forEach(line => {
-    hasStrict(JSON.parse(line).resourceLogs?.[0]?.scopeLogs?.[0]?.scope, scope)
+    t.assert.deepStrictEqual(JSON.parse(line).resourceLogs?.[0]?.scopeLogs?.[0]?.scope, scope)
   })
 
   const logRecords = [...lines.entries()]
@@ -248,6 +245,6 @@ test('translate Pino log format to Open Telemetry data format for each log level
   for (let i = 0; i < logRecords.length; i++) {
     const logRecord = logRecords[i]
     const expectedLine = expectedLines[i]
-    hasStrict(logRecord, expectedLine, `line ${i} is mapped correctly`)
+    t.assert.partialDeepStrictEqual(logRecord, expectedLine, `line ${i} is mapped correctly`)
   }
 })
