@@ -6,19 +6,9 @@ const { test } = require('node:test')
 const assert = require('node:assert/strict')
 const { SeverityNumber } = require('@opentelemetry/api-logs')
 const pino = require('pino')
+const { match } = require('./utils')
 
 const pinoLogLevels = pino.levels.values
-
-function match (result, expectedResult, message) {
-  const checkResult = Object
-    .keys(expectedResult)
-    .reduce((acc, key) => {
-      acc[key] = result[key]
-      return acc
-    }, {})
-
-  assert.deepStrictEqual(checkResult, expectedResult, message)
-}
 
 test('default severity number map', async () => {
   assert.deepStrictEqual(DEFAULT_SEVERITY_NUMBER_MAP, {

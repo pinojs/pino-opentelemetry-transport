@@ -9,6 +9,7 @@ const { extract } = require('tar-stream')
 const { SeverityNumber } = require('@opentelemetry/api-logs')
 const { text } = require('node:stream/consumers')
 const { setInterval } = require('node:timers/promises')
+const { match } = require('./utils')
 
 const LOG_FILE_PATH = '/etc/test-logs/otlp-logs.log'
 
@@ -246,9 +247,6 @@ test('translate Pino log format to Open Telemetry data format for each log level
   for (let i = 0; i < logRecords.length; i++) {
     const logRecord = logRecords[i]
     const expectedLine = expectedLines[i]
-    // Check each property individually
-    for (const prop in expectedLine) {
-      assert.deepStrictEqual(logRecord[prop], expectedLine[prop], `line ${i} ${prop} is mapped correctly`)
-    }
+    match(logRecord, expectedLine, `line ${i} is mapped correctly`)
   }
 })
