@@ -9,6 +9,16 @@ const pino = require('pino')
 
 const pinoLogLevels = pino.levels.values
 
+function match (result, expectedResult, message) {
+  assert.deepStrictEqual({
+    severityNumber: result.severityNumber,
+    severityText: result.severityText
+  },
+  expectedResult,
+  message
+  )
+}
+
 test('default severity number map', async () => {
   assert.deepStrictEqual(DEFAULT_SEVERITY_NUMBER_MAP, {
     [pinoLogLevels.trace]: SeverityNumber.TRACE,
@@ -60,110 +70,146 @@ test('toOpenTelemetry maps all log levels correctly', async () => {
     }
   )
 
-  const debugResult = toOpenTelemetry(
-    {
-      ...testLogEntryBase,
-      level: pinoLogLevels.debug
-    },
-    mapperOptions
-  )
-  assert.deepStrictEqual(debugResult.severityNumber, SeverityNumber.DEBUG)
-  assert.deepStrictEqual(debugResult.severityText, 'debug')
-
-  const infoResult = toOpenTelemetry(
-    {
-      ...testLogEntryBase,
-      level: pinoLogLevels.info
-    },
-    mapperOptions
-  )
-  assert.deepStrictEqual(infoResult.severityNumber, SeverityNumber.INFO)
-  assert.deepStrictEqual(infoResult.severityText, 'info')
-
-  const warnResult = toOpenTelemetry(
-    {
-      ...testLogEntryBase,
-      level: pinoLogLevels.warn
-    },
-    mapperOptions
-  )
-  assert.deepStrictEqual(warnResult.severityNumber, SeverityNumber.WARN)
-  assert.deepStrictEqual(warnResult.severityText, 'warn')
-
-  const errorResult = toOpenTelemetry(
-    {
-      ...testLogEntryBase,
-      level: pinoLogLevels.error
-    },
-    mapperOptions
-  )
-  assert.deepStrictEqual(errorResult.severityNumber, SeverityNumber.ERROR)
-  assert.deepStrictEqual(errorResult.severityText, 'error')
-
-  const fatalResult = toOpenTelemetry(
-    {
-      ...testLogEntryBase,
-      level: pinoLogLevels.fatal
-    },
-    {
-      ...mapperOptions,
-      severityNumberMap: {
-        35: SeverityNumber.INFO2
-      }
-    }
-  )
-  assert.deepStrictEqual(fatalResult.severityNumber, SeverityNumber.FATAL)
-  assert.deepStrictEqual(fatalResult.severityText, 'fatal')
-
-  const infoWithSeverity = toOpenTelemetry(
-    {
-      ...testLogEntryBase,
-      level: pinoLogLevels.info
-    },
-    {
-      ...mapperOptions,
-      severityNumberMap: {
-        [pinoLogLevels.info]: SeverityNumber.INFO3
-      }
-    }
-  )
-  assert.deepStrictEqual(infoWithSeverity.severityNumber, SeverityNumber.INFO3)
-  assert.deepStrictEqual(infoWithSeverity.severityText, 'info')
-
-  const customWithSeverity = toOpenTelemetry(
-    {
-      ...testLogEntryBase,
-      level: 35
-    },
-    {
-      ...mapperOptions,
-      levels: {
-        labels: {
-          35: 'custom'
-        }
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
+        level: pinoLogLevels.debug
       },
-      severityNumberMap: {
-        35: SeverityNumber.INFO2
-      }
+      mapperOptions
+    ),
+    {
+      severityNumber: SeverityNumber.DEBUG,
+      severityText: 'debug'
     }
   )
-  assert.deepStrictEqual(customWithSeverity.severityNumber, SeverityNumber.INFO2)
-  assert.deepStrictEqual(customWithSeverity.severityText, 'custom')
 
-  const customLevel = toOpenTelemetry(
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
+        level: pinoLogLevels.info
+      },
+      mapperOptions
+    ),
     {
-      ...testLogEntryBase,
-      level: 35
-    },
+      severityNumber: SeverityNumber.INFO,
+      severityText: 'info'
+    }
+  )
+
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
+        level: pinoLogLevels.warn
+      },
+      mapperOptions
+    ),
     {
-      ...mapperOptions,
-      levels: {
-        labels: {
-          35: 'custom'
+      severityNumber: SeverityNumber.WARN,
+      severityText: 'warn'
+    }
+  )
+
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
+        level: pinoLogLevels.error
+      },
+      mapperOptions
+    ),
+    {
+      severityNumber: SeverityNumber.ERROR,
+      severityText: 'error'
+    }
+  )
+
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
+        level: pinoLogLevels.fatal
+      },
+      {
+        ...mapperOptions,
+        severityNumberMap: {
+          35: SeverityNumber.INFO2
         }
       }
-    }
+    ),
+    {
+      severityNumber: SeverityNumber.FATAL,
+      severityText: 'fatal'
+    },
+    'use default severity numbers when level does not exist in severityNumberMap'
   )
-  assert.deepStrictEqual(customLevel.severityNumber, SeverityNumber.UNSPECIFIED)
-  assert.deepStrictEqual(customLevel.severityText, 'custom')
+
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
+        level: pinoLogLevels.info
+      },
+      {
+        ...mapperOptions,
+        severityNumberMap: {
+          [pinoLogLevels.info]: SeverityNumber.INFO3
+        }
+      }
+    ),
+    {
+      severityNumber: SeverityNumber.INFO3,
+      severityText: 'info'
+    },
+    'use configured severity numbers for built-in levels'
+  )
+
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
+        level: 35
+      },
+      {
+        ...mapperOptions,
+        levels: {
+          labels: {
+            35: 'custom'
+          }
+        },
+        severityNumberMap: {
+          35: SeverityNumber.INFO2
+        }
+      }
+    ),
+    {
+      severityNumber: SeverityNumber.INFO2,
+      severityText: 'custom'
+    },
+    'use configured severity numbers for custom levels'
+  )
+
+  match(
+    toOpenTelemetry(
+      {
+        ...testLogEntryBase,
+        level: 35
+      },
+      {
+        ...mapperOptions,
+        levels: {
+          labels: {
+            35: 'custom'
+          }
+        }
+      }
+    ),
+    {
+      severityNumber: SeverityNumber.UNSPECIFIED,
+      severityText: 'custom'
+    },
+    'use UNSPECIFIED severity number when there is no match for the level'
+  )
 })
