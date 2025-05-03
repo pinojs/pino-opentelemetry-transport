@@ -4,8 +4,7 @@
   "description": "OpenTelemetry transport for Pino",
   "main": "lib/pino-opentelemetry-transport.js",
   "scripts": {
-    "validate-and-test": "standard | snazzy && npm run test:unit && tsd",
-    "test:unit": "c8 -c .c8rc.json node --test test/lib/*.test.js",
+    "validate-and-test": "standard | snazzy && c8 -c .c8rc.json node --test test/lib && tsd",
     "test": "npm run validate-and-test",
     "docker-run": "docker compose up",
     "generate-types": "tsc",

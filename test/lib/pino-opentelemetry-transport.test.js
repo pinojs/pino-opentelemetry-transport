@@ -1,7 +1,7 @@
 'use strict'
 
 const { join } = require('path')
-const { it, before } = require('node:test')
+const { test, before } = require('node:test')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
@@ -45,7 +45,7 @@ before(async () => {
 
 const MOCK_HOSTNAME = 'hostname'
 
-it('translate Pino log format to Open Telemetry data format for each log level', async (t) => {
+test('translate Pino log format to Open Telemetry data format for each log level', async (t) => {
   const pino = requireInject.withEmptyCache('pino', {
     os: {
       hostname: () => MOCK_HOSTNAME
