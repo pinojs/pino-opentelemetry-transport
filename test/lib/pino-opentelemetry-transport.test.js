@@ -245,6 +245,14 @@ it('translate Pino log format to Open Telemetry data format for each log level',
   for (let i = 0; i < logRecords.length; i++) {
     const logRecord = logRecords[i]
     const expectedLine = expectedLines[i]
-    t.assert.partialDeepStrictEqual(logRecord, expectedLine, `line ${i} is mapped correctly`)
+    // Check each property individually
+    t.assert.deepStrictEqual(logRecord.severityNumber, expectedLine.severityNumber, `line ${i} severityNumber is mapped correctly`)
+    t.assert.deepStrictEqual(logRecord.severityText, expectedLine.severityText, `line ${i} severityText is mapped correctly`)
+    t.assert.deepStrictEqual(logRecord.body, expectedLine.body, `line ${i} body is mapped correctly`)
+    t.assert.deepStrictEqual(logRecord.traceId, expectedLine.traceId, `line ${i} traceId is mapped correctly`)
+    t.assert.deepStrictEqual(logRecord.spanId, expectedLine.spanId, `line ${i} spanId is mapped correctly`)
+    if (expectedLine.attributes) {
+      t.assert.deepStrictEqual(logRecord.attributes, expectedLine.attributes, `line ${i} attributes are mapped correctly`)
+    }
   }
 })
