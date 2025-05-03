@@ -10,13 +10,14 @@ const pino = require('pino')
 const pinoLogLevels = pino.levels.values
 
 function match (result, expectedResult, message) {
-  assert.deepStrictEqual({
-    severityNumber: result.severityNumber,
-    severityText: result.severityText
-  },
-  expectedResult,
-  message
-  )
+  const checkResult = Object
+    .keys(expectedResult)
+    .reduce((acc, key) => {
+      acc[key] = result[key]
+      return acc
+    }, {})
+
+  assert.deepStrictEqual(checkResult, expectedResult, message)
 }
 
 test('default severity number map', async () => {
