@@ -2,6 +2,7 @@
 
 const { join } = require('path')
 const { test, before } = require('node:test')
+const assert = require('node:assert/strict')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
@@ -45,7 +46,7 @@ before(async () => {
 
 const MOCK_HOSTNAME = 'hostname'
 
-test('translate Pino log format to Open Telemetry data format for each log level', async (t) => {
+test('translate Pino log format to Open Telemetry data format for each log level', async () => {
   const pino = requireInject.withEmptyCache('pino', {
     os: {
       hostname: () => MOCK_HOSTNAME
@@ -217,7 +218,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   const lines = content.split('\n').filter(Boolean)
 
-  t.assert.strictEqual(lines.length, expectedLines.length, 'correct number of lines')
+  assert.strictEqual(lines.length, expectedLines.length, 'correct number of lines')
 
   lines.forEach(line => {
     const foundAttributes = JSON.parse(
@@ -226,11 +227,11 @@ test('translate Pino log format to Open Telemetry data format for each log level
       attribute =>
         attribute.key === 'service.name' || attribute.key === 'service.version'
     )
-    t.assert.deepStrictEqual(foundAttributes, expectedResourceAttributes)
+    assert.deepStrictEqual(foundAttributes, expectedResourceAttributes)
   })
 
   lines.forEach(line => {
-    t.assert.deepStrictEqual(JSON.parse(line).resourceLogs?.[0]?.scopeLogs?.[0]?.scope, scope)
+    assert.deepStrictEqual(JSON.parse(line).resourceLogs?.[0]?.scopeLogs?.[0]?.scope, scope)
   })
 
   const logRecords = [...lines.entries()]
@@ -247,7 +248,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
     const expectedLine = expectedLines[i]
     // Check each property individually
     for (const prop in expectedLine) {
-      t.assert.deepStrictEqual(logRecord[prop], expectedLine[prop], `line ${i} ${prop} is mapped correctly`)
+      assert.deepStrictEqual(logRecord[prop], expectedLine[prop], `line ${i} ${prop} is mapped correctly`)
     }
   }
 })

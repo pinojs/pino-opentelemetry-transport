@@ -3,13 +3,14 @@
 // test otlp logger with all possible options
 const { toOpenTelemetry, DEFAULT_SEVERITY_NUMBER_MAP } = require('../../lib/opentelemetry-mapper')
 const { test } = require('node:test')
+const assert = require('node:assert/strict')
 const { SeverityNumber } = require('@opentelemetry/api-logs')
 const pino = require('pino')
 
 const pinoLogLevels = pino.levels.values
 
-test('default severity number map', async (t) => {
-  t.assert.deepStrictEqual(DEFAULT_SEVERITY_NUMBER_MAP, {
+test('default severity number map', async () => {
+  assert.deepStrictEqual(DEFAULT_SEVERITY_NUMBER_MAP, {
     [pinoLogLevels.trace]: SeverityNumber.TRACE,
     [pinoLogLevels.debug]: SeverityNumber.DEBUG,
     [pinoLogLevels.info]: SeverityNumber.INFO,
@@ -19,7 +20,7 @@ test('default severity number map', async (t) => {
   })
 })
 
-test('toOpenTelemetry maps all log levels correctly', async (t) => {
+test('toOpenTelemetry maps all log levels correctly', async () => {
   const mapperOptions = { messageKey: 'msg', levels: pino.levels }
   const testStart = Date.now()
   const testLogEntryBase = {
@@ -33,7 +34,7 @@ test('toOpenTelemetry maps all log levels correctly', async (t) => {
   const testSpanId = '1234567890123456'
   const testTraceFlags = '01'
 
-  t.assert.deepStrictEqual(
+  assert.deepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
@@ -66,8 +67,8 @@ test('toOpenTelemetry maps all log levels correctly', async (t) => {
     },
     mapperOptions
   )
-  t.assert.deepStrictEqual(debugResult.severityNumber, SeverityNumber.DEBUG)
-  t.assert.deepStrictEqual(debugResult.severityText, 'debug')
+  assert.deepStrictEqual(debugResult.severityNumber, SeverityNumber.DEBUG)
+  assert.deepStrictEqual(debugResult.severityText, 'debug')
 
   const infoResult = toOpenTelemetry(
     {
@@ -76,8 +77,8 @@ test('toOpenTelemetry maps all log levels correctly', async (t) => {
     },
     mapperOptions
   )
-  t.assert.deepStrictEqual(infoResult.severityNumber, SeverityNumber.INFO)
-  t.assert.deepStrictEqual(infoResult.severityText, 'info')
+  assert.deepStrictEqual(infoResult.severityNumber, SeverityNumber.INFO)
+  assert.deepStrictEqual(infoResult.severityText, 'info')
 
   const warnResult = toOpenTelemetry(
     {
@@ -86,8 +87,8 @@ test('toOpenTelemetry maps all log levels correctly', async (t) => {
     },
     mapperOptions
   )
-  t.assert.deepStrictEqual(warnResult.severityNumber, SeverityNumber.WARN)
-  t.assert.deepStrictEqual(warnResult.severityText, 'warn')
+  assert.deepStrictEqual(warnResult.severityNumber, SeverityNumber.WARN)
+  assert.deepStrictEqual(warnResult.severityText, 'warn')
 
   const errorResult = toOpenTelemetry(
     {
@@ -96,8 +97,8 @@ test('toOpenTelemetry maps all log levels correctly', async (t) => {
     },
     mapperOptions
   )
-  t.assert.deepStrictEqual(errorResult.severityNumber, SeverityNumber.ERROR)
-  t.assert.deepStrictEqual(errorResult.severityText, 'error')
+  assert.deepStrictEqual(errorResult.severityNumber, SeverityNumber.ERROR)
+  assert.deepStrictEqual(errorResult.severityText, 'error')
 
   const fatalResult = toOpenTelemetry(
     {
@@ -111,8 +112,8 @@ test('toOpenTelemetry maps all log levels correctly', async (t) => {
       }
     }
   )
-  t.assert.deepStrictEqual(fatalResult.severityNumber, SeverityNumber.FATAL)
-  t.assert.deepStrictEqual(fatalResult.severityText, 'fatal')
+  assert.deepStrictEqual(fatalResult.severityNumber, SeverityNumber.FATAL)
+  assert.deepStrictEqual(fatalResult.severityText, 'fatal')
 
   const infoWithSeverity = toOpenTelemetry(
     {
@@ -126,8 +127,8 @@ test('toOpenTelemetry maps all log levels correctly', async (t) => {
       }
     }
   )
-  t.assert.deepStrictEqual(infoWithSeverity.severityNumber, SeverityNumber.INFO3)
-  t.assert.deepStrictEqual(infoWithSeverity.severityText, 'info')
+  assert.deepStrictEqual(infoWithSeverity.severityNumber, SeverityNumber.INFO3)
+  assert.deepStrictEqual(infoWithSeverity.severityText, 'info')
 
   const customWithSeverity = toOpenTelemetry(
     {
@@ -146,8 +147,8 @@ test('toOpenTelemetry maps all log levels correctly', async (t) => {
       }
     }
   )
-  t.assert.deepStrictEqual(customWithSeverity.severityNumber, SeverityNumber.INFO2)
-  t.assert.deepStrictEqual(customWithSeverity.severityText, 'custom')
+  assert.deepStrictEqual(customWithSeverity.severityNumber, SeverityNumber.INFO2)
+  assert.deepStrictEqual(customWithSeverity.severityText, 'custom')
 
   const customLevel = toOpenTelemetry(
     {
@@ -163,6 +164,6 @@ test('toOpenTelemetry maps all log levels correctly', async (t) => {
       }
     }
   )
-  t.assert.deepStrictEqual(customLevel.severityNumber, SeverityNumber.UNSPECIFIED)
-  t.assert.deepStrictEqual(customLevel.severityText, 'custom')
+  assert.deepStrictEqual(customLevel.severityNumber, SeverityNumber.UNSPECIFIED)
+  assert.deepStrictEqual(customLevel.severityText, 'custom')
 })
