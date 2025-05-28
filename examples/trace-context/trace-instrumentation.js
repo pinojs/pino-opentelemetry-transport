@@ -4,22 +4,16 @@ const process = require('process')
 const opentelemetry = require('@opentelemetry/sdk-node')
 const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http')
 const { PinoInstrumentation } = require('@opentelemetry/instrumentation-pino')
-const { Resource } = require('@opentelemetry/resources')
+const { resourceFromAttributes } = require('@opentelemetry/resources')
 const { ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-node')
-const {
-  SemanticResourceAttributes
-} = require('@opentelemetry/semantic-conventions')
 
 const traceExporter = new ConsoleSpanExporter()
 
-const instrumentations = [
-  new HttpInstrumentation(),
-  new PinoInstrumentation()
-]
+const instrumentations = [new HttpInstrumentation(), new PinoInstrumentation()]
 
 const sdk = new opentelemetry.NodeSDK({
-  resource: new Resource({
-    [SemanticResourceAttributes.SERVICE_NAME]: 'Pino OpenTelemetry Example'
+  resource: resourceFromAttributes({
+    'service.name': 'Pino OpenTelemetry Example'
   }),
   traceExporter,
   instrumentations
