@@ -1,13 +1,15 @@
 'use strict'
 
 const { join } = require('path')
-const { test, before } = require('tap')
+const { test, before } = require('node:test')
+const assert = require('node:assert/strict')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
 const { SeverityNumber } = require('@opentelemetry/api-logs')
 const { text } = require('node:stream/consumers')
 const { setInterval } = require('node:timers/promises')
+const { match } = require('./utils')
 
 const LOG_FILE_PATH = '/etc/test-logs/otlp-logs.log'
 
@@ -45,10 +47,7 @@ before(async () => {
 
 const MOCK_HOSTNAME = 'hostname'
 
-test('translate Pino log format to Open Telemetry data format for each log level', async ({
-  same,
-  hasStrict
-}) => {
+test('translate Pino log format to Open Telemetry data format for each log level', async () => {
   const pino = requireInject.withEmptyCache('pino', {
     os: {
       hostname: () => MOCK_HOSTNAME
@@ -220,7 +219,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   const lines = content.split('\n').filter(Boolean)
 
-  same(lines.length, expectedLines.length, 'correct number of lines')
+  assert.strictEqual(lines.length, expectedLines.length, 'correct number of lines')
 
   lines.forEach(line => {
     const foundAttributes = JSON.parse(
@@ -229,11 +228,11 @@ test('translate Pino log format to Open Telemetry data format for each log level
       attribute =>
         attribute.key === 'service.name' || attribute.key === 'service.version'
     )
-    hasStrict(foundAttributes, expectedResourceAttributes)
+    assert.deepStrictEqual(foundAttributes, expectedResourceAttributes)
   })
 
   lines.forEach(line => {
-    hasStrict(JSON.parse(line).resourceLogs?.[0]?.scopeLogs?.[0]?.scope, scope)
+    assert.deepStrictEqual(JSON.parse(line).resourceLogs?.[0]?.scopeLogs?.[0]?.scope, scope)
   })
 
   const logRecords = [...lines.entries()]
@@ -248,6 +247,6 @@ test('translate Pino log format to Open Telemetry data format for each log level
   for (let i = 0; i < logRecords.length; i++) {
     const logRecord = logRecords[i]
     const expectedLine = expectedLines[i]
-    hasStrict(logRecord, expectedLine, `line ${i} is mapped correctly`)
+    match(logRecord, expectedLine, `line ${i} is mapped correctly`)
   }
 })
