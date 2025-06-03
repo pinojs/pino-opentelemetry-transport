@@ -2,14 +2,16 @@
 
 // test otlp logger with all possible options
 const { toOpenTelemetry, DEFAULT_SEVERITY_NUMBER_MAP } = require('../../lib/opentelemetry-mapper')
-const { test } = require('tap')
+const { test } = require('node:test')
+const assert = require('node:assert/strict')
 const { SeverityNumber } = require('@opentelemetry/api-logs')
 const pino = require('pino')
+const { match } = require('./utils')
 
 const pinoLogLevels = pino.levels.values
 
-test('default severity number map', async ({ same }) => {
-  same(DEFAULT_SEVERITY_NUMBER_MAP, {
+test('default severity number map', async () => {
+  assert.deepStrictEqual(DEFAULT_SEVERITY_NUMBER_MAP, {
     [pinoLogLevels.trace]: SeverityNumber.TRACE,
     [pinoLogLevels.debug]: SeverityNumber.DEBUG,
     [pinoLogLevels.info]: SeverityNumber.INFO,
@@ -19,7 +21,7 @@ test('default severity number map', async ({ same }) => {
   })
 })
 
-test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) => {
+test('toOpenTelemetry maps all log levels correctly', async () => {
   const mapperOptions = { messageKey: 'msg', levels: pino.levels }
   const testStart = Date.now()
   const testLogEntryBase = {
@@ -33,7 +35,7 @@ test('toOpenTelemetry maps all log levels correctly', async ({ match, same }) =>
   const testSpanId = '1234567890123456'
   const testTraceFlags = '01'
 
-  same(
+  assert.deepStrictEqual(
     toOpenTelemetry(
       {
         ...testLogEntryBase,
