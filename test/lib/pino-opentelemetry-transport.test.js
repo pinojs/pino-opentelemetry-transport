@@ -251,3 +251,43 @@ test('translate Pino log format to Open Telemetry data format for each log level
     hasStrict(logRecord, expectedLine, `line ${i} is mapped correctly`)
   }
 })
+
+test('works without explicit options parameter', async ({ pass }) => {
+  const pino = requireInject.withEmptyCache('pino', {
+    os: {
+      hostname: () => MOCK_HOSTNAME
+    }
+  })
+
+  // Test both undefined options and empty options object
+  const transport1 = pino.transport({
+    target: '../..'
+  })
+
+  const transport2 = pino.transport({
+    target: '../..',
+    options: {}
+  })
+
+  const logger1 = pino({
+    level: 'info'
+  }, transport1)
+
+  const logger2 = pino({
+    level: 'info'
+  }, transport2)
+
+  logger1.info('test message without options')
+  logger2.info('test message with empty options')
+
+  pass('Transport works without explicit options')
+})
+
+test('module function handles undefined options parameter', async ({ pass, ok }) => {
+  const transportModule = require('../../lib/pino-opentelemetry-transport')
+
+  const transport = await transportModule()
+  ok(transport, 'Transport created successfully')
+
+  pass('Module function handles undefined options')
+})
