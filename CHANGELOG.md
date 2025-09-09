@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.1.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v1.0.1...v1.1.0) (2025-09-09)
+
+
+### Features
+
+* update trace-instrumentation example ([#209](https://github.com/pinojs/pino-opentelemetry-transport/issues/209)) ([49d64c1](https://github.com/pinojs/pino-opentelemetry-transport/commit/49d64c112a02441ecbd13e3cc91fae9cf85760e6))
+
+
+### Bug Fixes
+
+* **deps:** bump actions/checkout from 4 to 5 ([#220](https://github.com/pinojs/pino-opentelemetry-transport/issues/220)) ([fa61ff6](https://github.com/pinojs/pino-opentelemetry-transport/commit/fa61ff6c88a24936b451aeb45adc204b28913ac3))
+* handle undefined options in multiple targets configuration ([#218](https://github.com/pinojs/pino-opentelemetry-transport/issues/218)) ([9152e7a](https://github.com/pinojs/pino-opentelemetry-transport/commit/9152e7a57dda15945c35fed33f4d387322efaf89)), closes [#216](https://github.com/pinojs/pino-opentelemetry-transport/issues/216)
+
 ## [1.0.1](https://github.com/pinojs/pino-opentelemetry-transport/compare/v1.0.0...v1.0.1) (2024-09-10)
 
 
