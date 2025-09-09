@@ -12,7 +12,7 @@ jobs:
       contents: read
       id-token: write
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Wait for release-please workflow to complete
         run: |
           merged_at=$(date -d"${{ github.event.pull_request.merged_at }}" +%s)
