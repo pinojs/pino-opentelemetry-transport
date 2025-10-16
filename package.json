@@ -4,7 +4,7 @@
   "description": "OpenTelemetry transport for Pino",
   "main": "lib/pino-opentelemetry-transport.js",
   "scripts": {
-    "validate-and-test": "eslint && node --test 'test/**/*.test.js' && tsd",
+    "validate-and-test": "eslint && borp -T && tsd",
     "test": "npm run validate-and-test",
     "docker-run": "docker compose up",
     "generate-types": "tsc",
@@ -33,6 +33,7 @@
     "@opentelemetry/instrumentation-pino": "^0.52.0",
     "@opentelemetry/sdk-node": "^0.205.0",
     "@types/node": "^24.0.12",
+    "borp": "^0.21.0",
     "eslint": "^9.37.0",
     "neostandard": "^0.12.2",
     "pino": "^9.0.0",
