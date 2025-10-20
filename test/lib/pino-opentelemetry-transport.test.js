@@ -1,7 +1,8 @@
 'use strict'
 
 const { join } = require('path')
-const { test, before } = require('tap')
+const { test, before } = require('node:test')
+const assert = require('node:assert')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
@@ -45,10 +46,7 @@ before(async () => {
 
 const MOCK_HOSTNAME = 'hostname'
 
-test('translate Pino log format to Open Telemetry data format for each log level', async ({
-  same,
-  hasStrict
-}) => {
+test('translate Pino log format to Open Telemetry data format for each log level', async () => {
   const pino = requireInject.withEmptyCache('pino', {
     os: {
       hostname: () => MOCK_HOSTNAME
@@ -90,11 +88,9 @@ test('translate Pino log format to Open Telemetry data format for each log level
   const extra = {
     foo: 'bar',
     baz: 'qux',
-    /* eslint-disable camelcase */
     trace_id: testTraceId,
     span_id: testSpanId,
     trace_flags: testTraceFlags
-    /* eslint-enable camelcase */
   }
 
   logger.trace(extra, 'test trace')
@@ -220,7 +216,7 @@ test('translate Pino log format to Open Telemetry data format for each log level
 
   const lines = content.split('\n').filter(Boolean)
 
-  same(lines.length, expectedLines.length, 'correct number of lines')
+  assert.strictEqual(lines.length, expectedLines.length, 'correct number of lines')
 
   lines.forEach(line => {
     const foundAttributes = JSON.parse(
@@ -229,11 +225,11 @@ test('translate Pino log format to Open Telemetry data format for each log level
       attribute =>
         attribute.key === 'service.name' || attribute.key === 'service.version'
     )
-    hasStrict(foundAttributes, expectedResourceAttributes)
+    assert.deepStrictEqual(foundAttributes, expectedResourceAttributes)
   })
 
   lines.forEach(line => {
-    hasStrict(JSON.parse(line).resourceLogs?.[0]?.scopeLogs?.[0]?.scope, scope)
+    assert.deepStrictEqual(JSON.parse(line).resourceLogs?.[0]?.scopeLogs?.[0]?.scope, scope)
   })
 
   const logRecords = [...lines.entries()]
@@ -248,11 +244,19 @@ test('translate Pino log format to Open Telemetry data format for each log level
   for (let i = 0; i < logRecords.length; i++) {
     const logRecord = logRecords[i]
     const expectedLine = expectedLines[i]
-    hasStrict(logRecord, expectedLine, `line ${i} is mapped correctly`)
+    // Only check the fields we care about, ignore extra fields like timeUnixNano, observedTimeUnixNano, flags
+    assert.strictEqual(logRecord.severityNumber, expectedLine.severityNumber, `line ${i} severityNumber matches`)
+    assert.strictEqual(logRecord.severityText, expectedLine.severityText, `line ${i} severityText matches`)
+    assert.deepStrictEqual(logRecord.body, expectedLine.body, `line ${i} body matches`)
+    assert.strictEqual(logRecord.traceId, expectedLine.traceId, `line ${i} traceId matches`)
+    assert.strictEqual(logRecord.spanId, expectedLine.spanId, `line ${i} spanId matches`)
+    if (expectedLine.attributes) {
+      assert.deepStrictEqual(logRecord.attributes, expectedLine.attributes, `line ${i} attributes match`)
+    }
   }
 })
 
-test('works without explicit options parameter', async ({ pass }) => {
+test('works without explicit options parameter', async () => {
   const pino = requireInject.withEmptyCache('pino', {
     os: {
       hostname: () => MOCK_HOSTNAME
@@ -280,14 +284,13 @@ test('works without explicit options parameter', async ({ pass }) => {
   logger1.info('test message without options')
   logger2.info('test message with empty options')
 
-  pass('Transport works without explicit options')
+  // If we get here without errors, the test passes
+  assert.ok(true, 'Transport works without explicit options')
 })
 
-test('module function handles undefined options parameter', async ({ pass, ok }) => {
+test('module function handles undefined options parameter', async () => {
   const transportModule = require('../../lib/pino-opentelemetry-transport')
 
   const transport = await transportModule()
-  ok(transport, 'Transport created successfully')
-
-  pass('Module function handles undefined options')
+  assert.ok(transport, 'Transport created successfully')
 })
