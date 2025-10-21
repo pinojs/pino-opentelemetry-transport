@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.1.1](https://github.com/pinojs/pino-opentelemetry-transport/compare/v1.1.0...v1.1.1) (2025-10-21)
+
+
+### Bug Fixes
+
+* **deps:** bump actions/setup-node from 4 to 5 ([#226](https://github.com/pinojs/pino-opentelemetry-transport/issues/226)) ([13349d6](https://github.com/pinojs/pino-opentelemetry-transport/commit/13349d686a5a1f55191f9b8c97cd8b2c6ff8733d))
+* **deps:** bump pino-abstract-transport ([#228](https://github.com/pinojs/pino-opentelemetry-transport/issues/228)) ([ce179b0](https://github.com/pinojs/pino-opentelemetry-transport/commit/ce179b0d3b1a8bbc12a9863a3467064bcfaccbe9))
+
 ## [1.1.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v1.0.1...v1.1.0) (2025-09-09)
 
 
