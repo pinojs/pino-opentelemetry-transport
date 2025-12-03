@@ -1,5 +1,23 @@
 # Changelog
 
+## [2.0.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v1.1.0...v2.0.0) (2025-12-03)
+
+
+### ⚠ BREAKING CHANGES
+
+* requires pino ^10.0.0 and Node.js 20+
+
+### Bug Fixes
+
+* **deps:** bump actions/checkout from 5 to 6 ([#236](https://github.com/pinojs/pino-opentelemetry-transport/issues/236)) ([1c8620c](https://github.com/pinojs/pino-opentelemetry-transport/commit/1c8620cbfeae67a7a26737941b07cee3aaf89d2d))
+* **deps:** bump actions/setup-node from 4 to 5 ([#226](https://github.com/pinojs/pino-opentelemetry-transport/issues/226)) ([13349d6](https://github.com/pinojs/pino-opentelemetry-transport/commit/13349d686a5a1f55191f9b8c97cd8b2c6ff8733d))
+* **deps:** bump pino-abstract-transport ([#228](https://github.com/pinojs/pino-opentelemetry-transport/issues/228)) ([ce179b0](https://github.com/pinojs/pino-opentelemetry-transport/commit/ce179b0d3b1a8bbc12a9863a3467064bcfaccbe9))
+
+
+### Miscellaneous Chores
+
+* drop Node 18 and pino &lt;10 support ([#237](https://github.com/pinojs/pino-opentelemetry-transport/issues/237)) ([3fc10f7](https://github.com/pinojs/pino-opentelemetry-transport/commit/3fc10f7a7d445704921dc5714591d1c0a57841c4))
+
 ## [1.1.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v1.0.1...v1.1.0) (2025-09-09)
 
 
