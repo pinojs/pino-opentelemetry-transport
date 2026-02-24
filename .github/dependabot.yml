@@ -22,5 +22,12 @@ updates:
     groups:
       production-dependencies:
         dependency-type: "production"
+      linting:
+        patterns:
+          - "eslint"
+          - "neostandard"
       development-dependencies:
         dependency-type: "development"
+        exclude-patterns:
+          - "eslint"
+          - "neostandard"
