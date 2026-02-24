@@ -1,5 +1,16 @@
 # Changelog
 
+## [3.0.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v2.0.0...v3.0.0) (2026-02-24)
+
+
+### ⚠ BREAKING CHANGES
+
+* OTEL_NODE_RESOURCE_DETECTORS env var now controls resource detection. Previously ignored, may change behavior for users who had it set for other instrumentation.
+
+### Features
+
+* bump otlp-logger from 1.1.13 to 2.0.0 ([#246](https://github.com/pinojs/pino-opentelemetry-transport/issues/246)) ([4edc3a1](https://github.com/pinojs/pino-opentelemetry-transport/commit/4edc3a1c45639ef9ffc8de1dbae14dc3729a4998))
+
 ## [2.0.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v1.1.0...v2.0.0) (2025-12-03)
 
 
