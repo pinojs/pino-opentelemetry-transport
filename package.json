@@ -16,7 +16,7 @@
   "repository": "github:pinojs/pino-opentelemetry-transport",
   "license": "MIT",
   "dependencies": {
-    "otlp-logger": "^1.1.4",
+    "otlp-logger": "^2.0.0",
     "pino-abstract-transport": "^3.0.0"
   },
   "types": "./types/pino-opentelemetry-transport.d.ts",
