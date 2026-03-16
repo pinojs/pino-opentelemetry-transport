@@ -2,15 +2,16 @@
   "name": "pino-opentelemetry-transport",
   "version": "3.0.0",
   "description": "OpenTelemetry transport for Pino",
-  "main": "lib/pino-opentelemetry-transport.js",
+  "main": "lib/pino-opentelemetry-transport.mjs",
   "scripts": {
     "validate-and-test": "eslint && borp && tsd",
+    "build": "node examples/transport-string/build.js",
     "test": "npm run validate-and-test",
     "docker-run": "docker compose up",
     "generate-types": "tsc",
     "pretest-ci": "npm run generate-types",
     "pretest": "npm run generate-types",
-    "prepack": "npm run generate-types"
+    "prepack": "npm run generate-types && npm run build"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
   "repository": "github:pinojs/pino-opentelemetry-transport",
@@ -34,6 +35,7 @@
     "@opentelemetry/sdk-node": "^0.213.0",
     "@types/node": "^25.0.0",
     "borp": "^1.0.0",
+    "esbuild": "^0.27.4",
     "eslint": "^9.39.1",
     "neostandard": "^0.12.2",
     "pino": "^10.1.0",
@@ -50,7 +52,8 @@
     "test"
   ],
   "files": [
+    "lib",
     "types",
-    "*.js"
+    "dist"
   ]
 }
