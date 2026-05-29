@@ -1,5 +1,12 @@
 # Changelog
 
+## [3.1.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v3.0.0...v3.1.0) (2026-05-29)
+
+
+### Features
+
+* **ci:** test with node 26 ([#256](https://github.com/pinojs/pino-opentelemetry-transport/issues/256)) ([fe7de85](https://github.com/pinojs/pino-opentelemetry-transport/commit/fe7de859aaacd82fc4629450c09c47158aa7ffe5))
+
 ## [3.0.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v2.0.0...v3.0.0) (2026-02-24)
 
 
