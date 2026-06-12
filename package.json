@@ -16,7 +16,13 @@
   "repository": "github:pinojs/pino-opentelemetry-transport",
   "license": "MIT",
   "dependencies": {
-    "otlp-logger": "^2.0.0",
+    "@opentelemetry/api": "^1.9.1",
+    "@opentelemetry/api-logs": "^0.218.0",
+    "@opentelemetry/exporter-logs-otlp-grpc": "^0.218.0",
+    "@opentelemetry/exporter-logs-otlp-http": "^0.218.0",
+    "@opentelemetry/exporter-logs-otlp-proto": "^0.218.0",
+    "@opentelemetry/resources": "^2.8.0",
+    "@opentelemetry/sdk-logs": "^0.218.0",
     "pino-abstract-transport": "^3.0.0"
   },
   "types": "./types/pino-opentelemetry-transport.d.ts",
@@ -27,8 +33,6 @@
     "@commitlint/cli": "^21.0.1",
     "@commitlint/config-conventional": "^21.0.1",
     "@fastify/pre-commit": "^2.0.2",
-    "@opentelemetry/api": "^1.4.1",
-    "@opentelemetry/api-logs": "^0.218.0",
     "@opentelemetry/instrumentation-http": "^0.218.0",
     "@opentelemetry/instrumentation-pino": "^0.64.0",
     "@opentelemetry/sdk-node": "^0.218.0",
