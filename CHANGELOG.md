@@ -1,5 +1,22 @@
 # Changelog
 
+## [4.0.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v3.0.0...v4.0.0) (2026-06-27)
+
+
+### ⚠ BREAKING CHANGES
+
+* otlp-logger is no longer a transitive dependency; consumers must install the opentelemetry dependencies themselves.
+
+### Features
+
+* **ci:** test with node 26 ([#256](https://github.com/pinojs/pino-opentelemetry-transport/issues/256)) ([fe7de85](https://github.com/pinojs/pino-opentelemetry-transport/commit/fe7de859aaacd82fc4629450c09c47158aa7ffe5))
+* remove otlp-logger dependency, use opentelemetry packages directly ([#261](https://github.com/pinojs/pino-opentelemetry-transport/issues/261)) ([030eeeb](https://github.com/pinojs/pino-opentelemetry-transport/commit/030eeebd92227a085ea439534cabc5ed698bfe86))
+
+
+### Bug Fixes
+
+* **ci:** drop EOL Node 20 from test matrix ([#266](https://github.com/pinojs/pino-opentelemetry-transport/issues/266)) ([ac7535f](https://github.com/pinojs/pino-opentelemetry-transport/commit/ac7535f8b5555307b46006dc7f3ac605c407ac6b))
+
 ## [3.0.0](https://github.com/pinojs/pino-opentelemetry-transport/compare/v2.0.0...v3.0.0) (2026-02-24)
 
 
