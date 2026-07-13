@@ -19,6 +19,11 @@ updates:
       prefix: fix
       prefix-development: chore
       include: scope
+    ignore:
+      # typescript-eslint (via neostandard) caps TS at <6.1.0; TS 7 crashes eslint.
+      # Hold on 6.x until the toolchain supports TS 7.
+      - dependency-name: "typescript"
+        versions: [">=7.0.0"]
     groups:
       production-dependencies:
         dependency-type: "production"
