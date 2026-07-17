@@ -59,7 +59,7 @@
     "test"
   ],
   "files": [
-    "types",
-    "*.js"
+    "lib",
+    "types"
   ]
 }
