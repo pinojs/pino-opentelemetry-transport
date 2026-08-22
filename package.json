@@ -33,8 +33,6 @@
     "pino": "^10.0.0"
   },
   "devDependencies": {
-    "@commitlint/cli": "^21.0.1",
-    "@commitlint/config-conventional": "^21.0.1",
     "@fastify/pre-commit": "^2.0.2",
     "@opentelemetry/instrumentation-http": "^0.220.0",
     "@opentelemetry/instrumentation-pino": "^0.66.0",
