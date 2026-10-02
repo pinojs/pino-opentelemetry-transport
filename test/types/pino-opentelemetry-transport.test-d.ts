@@ -27,6 +27,13 @@ expectType<Promise<Transform & OnUnknown>>(
   transport({
     loggerName: 'test',
     serviceVersion: '1.0.0',
+    ignoreTimestamp: true
+  })
+)
+expectType<Promise<Transform & OnUnknown>>(
+  transport({
+    loggerName: 'test',
+    serviceVersion: '1.0.0',
     severityNumberMap: {
       35: 10
     }

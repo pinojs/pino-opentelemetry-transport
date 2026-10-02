@@ -60,6 +60,7 @@ When using the transport, the following options can be used to configure the tra
 * `severityNumberMap`: Object mapping Pino log level numbers to OpenTelemetry log severity numbers. This is an override for adding custom log levels and changing default log levels. Undefined default Pino log levels will still be mapped to their default OpenTelemetry log severity. Optional
 * `resourceAttributes`: Object containing [resource attributes](https://opentelemetry.io/docs/instrumentation/js/resources/). Optional
 * `logRecordProcessorOptions`: a single object or an array of objects specifying the LogProcessor and LogExporter types and constructor params. Optional
+* `ignoreTimestamp`: If `true`, the Pino log timestamp is not forwarded to OpenTelemetry, letting the SDK set its own timestamp. Optional
 
 ## Usage
 
