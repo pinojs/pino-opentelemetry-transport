@@ -166,3 +166,35 @@ test('toOpenTelemetry maps all log levels correctly', async () => {
   assert.strictEqual(unmappedCustomLevelResult.severityNumber, SeverityNumber.UNSPECIFIED, 'use UNSPECIFIED severity number when there is no match for the level')
   assert.strictEqual(unmappedCustomLevelResult.severityText, 'custom')
 })
+
+test('toOpenTelemetry handles ignoreTimestamp option', async () => {
+  const testStart = Date.now()
+  const testLogEntryBase = {
+    msg: 'test message',
+    pid: 123,
+    time: testStart,
+    hostname: 'test-hostname'
+  }
+  const mapperOptions = { messageKey: 'msg', levels: pino.levels }
+
+  const withTimestamp = toOpenTelemetry(
+    {
+      ...testLogEntryBase,
+      level: pinoLogLevels.info
+    },
+    mapperOptions
+  )
+  assert.strictEqual(withTimestamp.timestamp, testStart, 'timestamp is included by default')
+
+  const withoutTimestamp = toOpenTelemetry(
+    {
+      ...testLogEntryBase,
+      level: pinoLogLevels.info
+    },
+    {
+      ...mapperOptions,
+      ignoreTimestamp: true
+    }
+  )
+  assert.strictEqual(withoutTimestamp.timestamp, undefined, 'timestamp is omitted when ignoreTimestamp is true')
+})
