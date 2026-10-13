@@ -34,9 +34,9 @@
   },
   "devDependencies": {
     "@fastify/pre-commit": "^2.0.2",
-    "@opentelemetry/instrumentation-http": "^0.222.0",
-    "@opentelemetry/instrumentation-pino": "^0.68.0",
-    "@opentelemetry/sdk-node": "^0.222.0",
+    "@opentelemetry/instrumentation-http": "^0.223.0",
+    "@opentelemetry/instrumentation-pino": "^0.69.0",
+    "@opentelemetry/sdk-node": "^0.223.0",
     "@opentelemetry/sdk-trace-node": "^2.7.1",
     "@types/node": "^26.1.1",
     "borp": "^1.0.0",
