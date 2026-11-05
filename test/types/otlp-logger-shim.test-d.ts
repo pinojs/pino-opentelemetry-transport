@@ -1,5 +1,5 @@
 import { expectType } from 'tsd'
-import type { LogRecord } from '@opentelemetry/api-logs'
+import type { LogRecord } from '@opentelemetry/api'
 
 import { getOtlpLogger } from '../../lib/otlp-logger-shim'
 

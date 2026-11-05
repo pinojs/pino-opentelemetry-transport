@@ -5,7 +5,7 @@ const opentelemetry = require('@opentelemetry/sdk-node')
 const { HttpInstrumentation } = require('@opentelemetry/instrumentation-http')
 const { PinoInstrumentation } = require('@opentelemetry/instrumentation-pino')
 const { resourceFromAttributes } = require('@opentelemetry/resources')
-const { ConsoleSpanExporter } = require('@opentelemetry/sdk-trace-node')
+const { ConsoleSpanExporter } = require('@opentelemetry/sdk-trace')
 
 const traceExporter = new ConsoleSpanExporter()
 
