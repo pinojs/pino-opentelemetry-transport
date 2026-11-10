@@ -144,6 +144,10 @@ OTEL_EXPORTER_OTLP_LOGS_PROTOCOL='grpc' OTEL_EXPORTER_OTLP_LOGS_ENDPOINT=http://
 
 ## Test the repo locally
 
+Run `npm run test:package` to install the packed transport in a temporary consumer,
+validate its dependency graph and verify worker log export and shutdown flushing.
+This test uses a local HTTP receiver and does not require Docker.
+
 Run the OTLP collector in a container
 
 ```npm run docker-run```
