@@ -3,7 +3,7 @@
 const { test } = require('node:test')
 const assert = require('node:assert')
 const { toOpenTelemetry, DEFAULT_SEVERITY_NUMBER_MAP } = require('../../lib/opentelemetry-mapper')
-const { SeverityNumber } = require('@opentelemetry/api-logs')
+const { SeverityNumber } = require('@opentelemetry/api')
 const pino = require('pino')
 
 const pinoLogLevels = pino.levels.values

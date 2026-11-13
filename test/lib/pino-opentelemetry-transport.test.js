@@ -6,7 +6,7 @@ const assert = require('node:assert')
 const requireInject = require('require-inject')
 const { Wait, GenericContainer } = require('testcontainers')
 const { extract } = require('tar-stream')
-const { SeverityNumber } = require('@opentelemetry/api-logs')
+const { SeverityNumber } = require('@opentelemetry/api')
 const { text } = require('node:stream/consumers')
 const { setInterval } = require('node:timers/promises')
 
