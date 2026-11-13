@@ -5,13 +5,14 @@
   "main": "lib/pino-opentelemetry-transport.js",
   "scripts": {
     "deps": "knip --production --dependencies",
-    "validate-and-test": "npm run deps && eslint && borp --coverage --check-coverage && tsd",
+    "validate-and-test": "npm run deps && eslint && borp --coverage --check-coverage && tsd && npm run test:package",
     "test": "npm run validate-and-test",
     "docker-run": "docker compose up",
     "generate-types": "tsc",
     "pretest-ci": "npm run generate-types",
     "pretest": "npm run generate-types",
-    "prepack": "npm run generate-types"
+    "prepack": "npm run generate-types",
+    "test:package": "node test/package-smoke.js"
   },
   "author": "Vladimir Adamic <vladimir.adamic@nearform.com>",
   "repository": "github:pinojs/pino-opentelemetry-transport",
