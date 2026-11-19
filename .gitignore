@@ -5,3 +5,6 @@ node_modules
 *.d.ts.map
 coverage
 package-lock.json
+.pi
+AGENTS.md
+CLAUDE.md
